@@ -303,16 +303,24 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func requestPermissionsAndMaybeShowAlert() async {
-        await presentPermissionSetupBox(snapshot: await Permissions.currentSnapshot())
+        let snapshot = await Permissions.currentSnapshot()
+        await presentPermissionSetupBox(snapshot: snapshot)
     }
 
     private func presentPermissionSetupBox(snapshot: PermissionSnapshot) async {
+        // Always refresh right before rendering to avoid stale launch-time values.
+        let liveSnapshot = await Permissions.currentSnapshot()
+
         let alert = NSAlert()
         alert.messageText = "MeetScribe needs permissions"
-        alert.informativeText = "Grant access to Calendar, Microphone, and Screen Recording so MeetScribe can auto-join and record meetings."
+        if liveSnapshot.screenRecordingOnlyBlocker {
+            alert.informativeText = "Calendar and Microphone are granted. Screen Recording is still not active for this running process. If it is enabled in System Settings, fully quit and reopen MeetScribe."
+        } else {
+            alert.informativeText = "Grant access to Calendar, Microphone, and Screen Recording so MeetScribe can auto-join and record meetings."
+        }
         alert.addButton(withTitle: "Grant Permissions")
         alert.addButton(withTitle: "Later")
-        alert.accessoryView = makePermissionAccessoryView(snapshot: snapshot)
+        alert.accessoryView = makePermissionAccessoryView(snapshot: liveSnapshot)
 
         NSApp.activate(ignoringOtherApps: true)
         let response = alert.runModal()
@@ -329,6 +337,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         if snapshot.allGranted {
             alert.messageText = "Permissions granted"
             alert.informativeText = "MeetScribe now has Calendar, Microphone, and Screen Recording access."
+        } else if snapshot.screenRecordingOnlyBlocker {
+            alert.messageText = "Relaunch required for Screen Recording"
+            alert.informativeText = "Calendar and Microphone are granted. Screen Recording appears enabled but is not active for this run. Fully quit and reopen MeetScribe."
         } else {
             alert.messageText = "Some permissions are still missing"
             alert.informativeText = """

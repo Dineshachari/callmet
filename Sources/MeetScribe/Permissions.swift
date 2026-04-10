@@ -51,6 +51,10 @@ struct PermissionSnapshot {
     var allGranted: Bool {
         calendarGranted && microphoneGranted && screenRecordingGranted
     }
+
+    var screenRecordingOnlyBlocker: Bool {
+        calendarGranted && microphoneGranted && !screenRecordingGranted
+    }
 }
 
 struct PermissionDiagnostics {
@@ -231,10 +235,19 @@ enum Permissions {
 
 extension PermissionSnapshot {
     func summaryLines() -> [String] {
+        let screenLine: String
+        if screenRecordingGranted {
+            screenLine = "Screen Recording: Granted"
+        } else if screenRecordingOnlyBlocker {
+            screenLine = "Screen Recording: Not active for this run (quit and reopen after enabling)"
+        } else {
+            screenLine = "Screen Recording: Needs Access"
+        }
+
         return [
             "Calendar: \(calendarGranted ? "Granted" : "Needs Access")",
             "Microphone: \(microphoneGranted ? "Granted" : "Needs Access")",
-            "Screen Recording: \(screenRecordingGranted ? "Granted" : "Needs Access")"
+            screenLine
         ]
     }
 }
