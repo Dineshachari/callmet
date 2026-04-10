@@ -33,6 +33,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var observers: [NSObjectProtocol] = []
     private var isMonitoring = false
     private let didShowPermissionOnboardingKey = "com.dinesh.meetscribe.didShowPermissionOnboarding"
+    private var recordingStartedAt: Date?
+    private var recordingPulseVisible = true
+    private var recordingIndicatorTimer: Timer?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
@@ -50,6 +53,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationWillTerminate(_ notification: Notification) {
         scheduler.stop()
+        stopRecordingIndicatorUpdates()
         observers.forEach(NotificationCenter.default.removeObserver)
         observers.removeAll()
     }
@@ -98,8 +102,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     @objc private func joinMeetingLink() {
         let result = promptForMeetingLink()
-        guard let result else { return }
-        controller.joinManualMeeting(url: result.url, meetingName: result.meetingName)
+        guard let result else {
+            AppTrace.log("ui.joinMeetingLink cancelledOrInvalidInput")
+            return
+        }
+        AppTrace.log("ui.joinMeetingLink submit url=\(result.url.absoluteString) name=\(result.meetingName)")
+        Task { @MainActor in
+            AppTrace.log("ui.joinMeetingLink dispatchToController")
+            controller.joinManualMeeting(url: result.url, meetingName: result.meetingName)
+        }
     }
 
     @objc private func setBotDisplayName() {
@@ -165,6 +176,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         observers.append(observer)
 
+        let captureStartedObserver = NotificationCenter.default.addObserver(
+            forName: Notification.Name("captureStarted"),
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            self?.startRecordingIndicatorUpdates()
+        }
+        observers.append(captureStartedObserver)
+
         let captureObserver = NotificationCenter.default.addObserver(
             forName: .captureStopped,
             object: nil,
@@ -172,6 +192,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         ) { [weak self] _ in
             Task { @MainActor [weak self] in
                 await self?.controller.stopRecording()
+                self?.stopRecordingIndicatorUpdates()
                 self?.updateMenuState()
             }
         }
@@ -275,15 +296,58 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func updateMenuState() {
         monitoringItem?.title = isMonitoring ? "Stop Monitoring" : "Start Monitoring"
         monitoringItem?.action = isMonitoring ? #selector(stopMonitoring) : #selector(startMonitoring)
-        stopRecordingItem?.isEnabled = true
+        stopRecordingItem?.isEnabled = controller.isRecording
         joinItem?.isEnabled = true
         botNameItem?.isEnabled = true
         permissionsItem?.isEnabled = true
         screenRecordingSettingsItem?.isEnabled = true
         permissionDiagnosticsItem?.isEnabled = true
-        statusItem?.button?.title = isMonitoring ? "MeetScribe ●" : "MeetScribe ○"
+        statusItem?.button?.title = statusBarTitle()
         outputFolderItem?.title = "Output Folder: \(outputFolderStore.displayName())"
         botNameStatusItem?.title = "Bot Name: \(botSettings.displayName)"
+    }
+
+    private func startRecordingIndicatorUpdates() {
+        if recordingStartedAt == nil {
+            recordingStartedAt = Date()
+        }
+        recordingPulseVisible = true
+        recordingIndicatorTimer?.invalidate()
+        recordingIndicatorTimer = Timer.scheduledTimer(withTimeInterval: 0.85, repeats: true) { [weak self] _ in
+            guard let self else { return }
+            self.recordingPulseVisible.toggle()
+            self.updateMenuState()
+        }
+        if let recordingIndicatorTimer {
+            RunLoop.main.add(recordingIndicatorTimer, forMode: .common)
+        }
+        updateMenuState()
+    }
+
+    private func stopRecordingIndicatorUpdates() {
+        recordingIndicatorTimer?.invalidate()
+        recordingIndicatorTimer = nil
+        recordingStartedAt = nil
+        recordingPulseVisible = true
+    }
+
+    private func statusBarTitle() -> String {
+        if controller.isRecording {
+            if recordingStartedAt == nil {
+                recordingStartedAt = Date()
+            }
+            let dot = recordingPulseVisible ? "🔴" : "⚪"
+            return "MeetScribe \(dot) \(recordingElapsedString())"
+        }
+        return isMonitoring ? "MeetScribe ●" : "MeetScribe ○"
+    }
+
+    private func recordingElapsedString() -> String {
+        guard let recordingStartedAt else { return "00:00" }
+        let elapsed = Int(Date().timeIntervalSince(recordingStartedAt))
+        let minutes = elapsed / 60
+        let seconds = elapsed % 60
+        return String(format: "%02d:%02d", minutes, seconds)
     }
 
     private func registerLoginItemIfPossible() {
@@ -320,13 +384,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func requestPermissionsAndMaybeShowAlert() async {
-        let snapshot = await Permissions.currentSnapshot()
+        let snapshot = await Permissions.stabilizedSnapshotForUI()
+        if snapshot.allGranted {
+            showPermissionsAlreadyGrantedBox()
+            return
+        }
         await presentPermissionSetupBox(snapshot: snapshot)
     }
 
     private func presentPermissionSetupBox(snapshot: PermissionSnapshot) async {
         // Always refresh right before rendering to avoid stale launch-time values.
-        let liveSnapshot = await Permissions.currentSnapshot()
+        let liveSnapshot = await Permissions.stabilizedSnapshotForUI()
+        if liveSnapshot.allGranted {
+            showPermissionsAlreadyGrantedBox()
+            return
+        }
 
         let alert = NSAlert()
         alert.messageText = "MeetScribe needs permissions"
@@ -356,6 +428,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         showPermissionResultBox(snapshot: after)
     }
 
+    private func showPermissionsAlreadyGrantedBox() {
+        let alert = NSAlert()
+        alert.messageText = "Permissions already granted"
+        alert.informativeText = "Calendar, Microphone, and Screen Recording are already active for MeetScribe."
+        alert.addButton(withTitle: "OK")
+        NSApp.activate(ignoringOtherApps: true)
+        alert.runModal()
+    }
+
     private func showPermissionResultBox(snapshot: PermissionSnapshot) {
         let alert = NSAlert()
         if snapshot.allGranted {
@@ -364,6 +445,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         } else if snapshot.screenRecordingRelaunchLikely {
             alert.messageText = "Relaunch required for Screen Recording"
             alert.informativeText = "Calendar and Microphone are granted. Screen Recording appears enabled but is not active for this run. Fully quit and reopen MeetScribe."
+        } else if snapshot.screenRecordingOnlyBlocker {
+            alert.messageText = "Screen Recording still needs access"
+            alert.informativeText = """
+            macOS did not grant Screen Recording from the in-app request.
+            We opened System Settings to Screen Recording. Enable MeetScribe there,
+            then fully quit and reopen the app.
+            """
         } else {
             alert.messageText = "Some permissions are still missing"
             alert.informativeText = """
@@ -442,13 +530,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         NSApp.activate(ignoringOtherApps: true)
         guard alert.runModal() == .alertFirstButtonReturn else { return nil }
         let rawLink = linkField.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !rawLink.isEmpty else { return nil }
+        guard !rawLink.isEmpty else {
+            AppTrace.log("ui.joinMeetingLink emptyURLField")
+            return nil
+        }
 
         let resolvedURL = MeetingLinkParser.extractMeetingURL(from: rawLink)
             ?? URL(string: rawLink)
             ?? URL(string: "https://\(rawLink)")
 
         guard let url = resolvedURL else {
+            AppTrace.log("ui.joinMeetingLink invalidURL raw=\(rawLink)")
             let errorAlert = NSAlert()
             errorAlert.messageText = "Invalid meeting link"
             errorAlert.informativeText = "Paste a valid Google Meet, Zoom, or Teams link."

@@ -2,6 +2,7 @@ import AppKit
 import ObjectiveC
 import WebKit
 
+@MainActor
 final class WebViewPool {
     private(set) var window: NSWindow?
     private(set) var webView: WKWebView?

@@ -1,6 +1,7 @@
 import Foundation
 import WebKit
 
+@MainActor
 final class MeetingJoiner {
     private let pool = WebViewPool()
 

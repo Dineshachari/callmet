@@ -15,6 +15,7 @@ final class MeetingController {
     private let sessionLogger = MeetingSessionLogger()
 
     private var currentSession: MeetingSession?
+    var isRecording: Bool { currentSession != nil }
 
     init() {
         captureSession.onVideo = { [weak self] sample in
@@ -29,10 +30,12 @@ final class MeetingController {
     }
 
     func handle(meetingRequest: MeetingRequest) {
+        AppTrace.log("meeting.handle source=\(meetingRequest.source == .scheduled ? "scheduled" : "manual") name=\(meetingRequest.meetingName)")
         Task {
             do {
                 try await startRecording(for: meetingRequest)
             } catch {
+                AppTrace.log("meeting.startRecording failed error=\(error.localizedDescription)")
                 NotificationCenter.default.post(name: .captureStopped, object: error)
             }
         }
@@ -48,19 +51,25 @@ final class MeetingController {
     }
 
     private func startRecording(for request: MeetingRequest) async throws {
+        AppTrace.log("meeting.startRecording begin url=\(request.meetingURL.absoluteString) name=\(request.meetingName)")
         let snapshot = await Permissions.currentSnapshot()
+        AppTrace.log("meeting.startRecording snapshot calendar=\(snapshot.calendarGranted) mic=\(snapshot.microphoneGranted) screen=\(snapshot.screenRecordingGranted)")
         if !snapshot.allGranted {
             let updatedSnapshot = await Permissions.requestMissingPermissions()
             guard updatedSnapshot.allGranted else {
+                AppTrace.log("meeting.permissionsMissing calendar=\(updatedSnapshot.calendarGranted) mic=\(updatedSnapshot.microphoneGranted) screen=\(updatedSnapshot.screenRecordingGranted)")
                 throw NSError(domain: "MeetScribe", code: 5, userInfo: [NSLocalizedDescriptionKey: "Permissions are required"])
             }
         }
 
         let joinedAt = Date()
         keepAwake.start()
+        AppTrace.log("meeting.keepAwake started")
 
         do {
+            AppTrace.log("meeting.joiner.begin")
             let windowID = try await joiner.join(url: request.meetingURL, botDisplayName: botSettings.displayName)
+            AppTrace.log("meeting.joiner.success windowID=\(windowID)")
             let recordingStartedAt = Date()
 
             let outputDirectory = outputFolderStore.recordingDirectoryURL()
@@ -74,6 +83,8 @@ final class MeetingController {
                 joinedAt: joinedAt,
                 recordingStartedAt: recordingStartedAt
             )
+            NotificationCenter.default.post(name: Notification.Name("captureStarted"), object: nil)
+            AppTrace.log("meeting.captureStarted output=\(outputURL.path)")
             try writer.start(url: outputURL)
 
             try mixer.start()
@@ -81,12 +92,14 @@ final class MeetingController {
         } catch {
             currentSession = nil
             keepAwake.stop()
+            AppTrace.log("meeting.recordingPipeline failed error=\(error.localizedDescription)")
             throw error
         }
     }
 
     func stopRecording() async {
         guard let currentSession else {
+            AppTrace.log("meeting.stopRecording ignored noActiveSession")
             return
         }
 
@@ -110,6 +123,8 @@ final class MeetingController {
         }
 
         self.currentSession = nil
+        NotificationCenter.default.post(name: .captureStopped, object: nil)
+        AppTrace.log("meeting.captureStopped output=\(currentSession.recordingURL.path)")
     }
 }
 

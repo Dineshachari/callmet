@@ -71,7 +71,7 @@ struct PermissionDiagnostics {
 enum Permissions {
     private static let calendarGrantedPersistedKey = "com.dinesh.meetscribe.calendarGrantedPersisted"
     private static let microphoneGrantedPersistedKey = "com.dinesh.meetscribe.microphoneGrantedPersisted"
-    private static let screenRecordingEnabledPersistedKey = "com.dinesh.meetscribe.screenRecordingEnabledPersisted"
+    private static let screenRecordingConsentObservedAtKey = "com.dinesh.meetscribe.screenRecordingConsentObservedAt"
     private static var calendarGrantedOverride: Bool {
         get { UserDefaults.standard.bool(forKey: calendarGrantedPersistedKey) }
         set { UserDefaults.standard.set(newValue, forKey: calendarGrantedPersistedKey) }
@@ -80,9 +80,15 @@ enum Permissions {
         get { UserDefaults.standard.bool(forKey: microphoneGrantedPersistedKey) }
         set { UserDefaults.standard.set(newValue, forKey: microphoneGrantedPersistedKey) }
     }
-    private static var screenRecordingEnabledOverride: Bool {
-        get { UserDefaults.standard.bool(forKey: screenRecordingEnabledPersistedKey) }
-        set { UserDefaults.standard.set(newValue, forKey: screenRecordingEnabledPersistedKey) }
+    private static func markScreenRecordingConsentObserved() {
+        UserDefaults.standard.set(Date().timeIntervalSince1970, forKey: screenRecordingConsentObservedAtKey)
+    }
+
+    private static func hasRecentScreenRecordingConsentSignal() -> Bool {
+        let value = UserDefaults.standard.double(forKey: screenRecordingConsentObservedAtKey)
+        guard value > 0 else { return false }
+        // Keep "relaunch likely" hint short-lived; avoid stale false positives across later runs.
+        return (Date().timeIntervalSince1970 - value) <= 300
     }
 
     static func currentSnapshot() async -> PermissionSnapshot {
@@ -91,7 +97,7 @@ enum Permissions {
             calendarGranted: isCalendarGranted(),
             microphoneGranted: isMicrophoneGranted(),
             screenRecordingGranted: screenGranted,
-            screenRecordingLikelyEnabled: screenGranted || screenRecordingEnabledOverride
+            screenRecordingLikelyEnabled: screenGranted || hasRecentScreenRecordingConsentSignal()
         )
         AppTrace.log(
             "permissions.snapshot calendar=\(snapshot.calendarGranted) calendarStatus=\(calendarAuthorizationStatusDescription()) mic=\(snapshot.microphoneGranted) micStatus=\(microphoneAuthorizationStatusDescription()) screen=\(snapshot.screenRecordingGranted)"
@@ -102,7 +108,7 @@ enum Permissions {
     static func isScreenRecordingGranted() -> Bool {
         let granted = CGPreflightScreenCaptureAccess()
         if granted {
-            screenRecordingEnabledOverride = true
+            markScreenRecordingConsentObserved()
         }
         return granted
     }
@@ -122,7 +128,13 @@ enum Permissions {
         if granted {
             // Persist successful consent to avoid regressing to "needs access" wording.
             // Actual capture still depends on preflight becoming true in a future launch.
-            screenRecordingEnabledOverride = true
+            markScreenRecordingConsentObserved()
+        } else if !isScreenRecordingGranted() {
+            // macOS may not always show the prompt again; push users to the correct settings pane.
+            await MainActor.run {
+                openScreenRecordingPrivacyPane()
+            }
+            AppTrace.log("permissions.screen requestNoPromptOrDenied openedSettingsPane=true")
         }
         AppTrace.log("permissions.screen requestResult=\(granted)")
         return granted
@@ -281,6 +293,21 @@ enum Permissions {
         }
         return snapshot
     }
+
+    static func stabilizedSnapshotForUI() async -> PermissionSnapshot {
+        var snapshot = await currentSnapshot()
+        // Screen preflight can momentarily flap right after focus/permission transitions.
+        // Re-check before showing a relaunch-only path to avoid false negatives.
+        if snapshot.screenRecordingOnlyBlocker && snapshot.screenRecordingLikelyEnabled {
+            try? await Task.sleep(nanoseconds: 400_000_000)
+            snapshot = await currentSnapshot()
+            if snapshot.screenRecordingOnlyBlocker && snapshot.screenRecordingLikelyEnabled {
+                try? await Task.sleep(nanoseconds: 700_000_000)
+                snapshot = await currentSnapshot()
+            }
+        }
+        return snapshot
+    }
 }
 
 extension PermissionSnapshot {
@@ -309,7 +336,7 @@ extension Permissions {
             calendarGranted: isCalendarGranted(),
             microphoneGranted: isMicrophoneGranted(),
             screenRecordingGranted: screenGranted,
-            screenRecordingLikelyEnabled: screenGranted || screenRecordingEnabledOverride
+            screenRecordingLikelyEnabled: screenGranted || hasRecentScreenRecordingConsentSignal()
         )
     }
 
@@ -342,7 +369,7 @@ extension Permissions {
             lines.append("Calendar status: \(d.calendarStatus)")
             lines.append("Microphone status: \(d.microphoneStatus)")
             lines.append("Screen Recording preflight: \(d.screenRecordingPreflightGranted ? "granted" : "notGranted")")
-            lines.append("Screen Recording persisted consent: \(effective.screenRecordingLikelyEnabled ? "true" : "false")")
+            lines.append("Screen Recording recent consent signal: \(effective.screenRecordingLikelyEnabled ? "true" : "false")")
         }
 
         if !effective.calendarGranted && (d.calendarStatus == "denied" || d.calendarStatus == "restricted" || d.calendarStatus == "writeOnly") {
