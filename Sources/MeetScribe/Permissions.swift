@@ -240,6 +240,14 @@ extension PermissionSnapshot {
 }
 
 extension Permissions {
+    static func effectiveSnapshotForDiagnostics() -> PermissionSnapshot {
+        PermissionSnapshot(
+            calendarGranted: isCalendarGranted(),
+            microphoneGranted: isMicrophoneGranted(),
+            screenRecordingGranted: isScreenRecordingGranted()
+        )
+    }
+
     static func requestAllPermissions() async -> PermissionStatus {
         let snapshot = await requestMissingPermissions()
         return snapshot.allGranted ? .granted : .denied
@@ -255,7 +263,11 @@ extension Permissions {
 
     static func diagnosticsLines() -> [String] {
         let d = diagnostics()
+        let effective = effectiveSnapshotForDiagnostics()
         var lines = [
+            "Effective Calendar: \(effective.calendarGranted ? "granted" : "notGranted")",
+            "Effective Microphone: \(effective.microphoneGranted ? "granted" : "notGranted")",
+            "Effective Screen Recording: \(effective.screenRecordingGranted ? "granted" : "notGranted")",
             "Calendar status: \(d.calendarStatus)",
             "Microphone status: \(d.microphoneStatus)",
             "Screen Recording preflight: \(d.screenRecordingPreflightGranted ? "granted" : "notGranted")"

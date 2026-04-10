@@ -126,10 +126,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     @objc private func showPermissionDiagnostics() {
+        let bundle = Bundle.main
+        let version = (bundle.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String) ?? "?"
+        let build = (bundle.object(forInfoDictionaryKey: "CFBundleVersion") as? String) ?? "?"
+        let bundleID = bundle.bundleIdentifier ?? "?"
+        let executable = bundle.executableURL?.path ?? "?"
+
         let lines = Permissions.diagnosticsLines()
         let alert = NSAlert()
         alert.messageText = "Permission Diagnostics"
-        alert.informativeText = lines.joined(separator: "\n")
+        alert.informativeText = """
+        Version: \(version) (\(build))
+        Bundle ID: \(bundleID)
+        Executable: \(executable)
+
+        \(lines.joined(separator: "\n"))
+        """
         alert.addButton(withTitle: "OK")
         NSApp.activate(ignoringOtherApps: true)
         alert.runModal()
