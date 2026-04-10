@@ -1,5 +1,7 @@
 # MeetScribe
 
+Source: [github.com/Dineshachari/callmet](https://github.com/Dineshachari/callmet) (repo name **callmet**).
+
 **MeetScribe** is a native **macOS** menu bar app that **auto-detects upcoming meetings** from Calendar, **joins** Google Meet (and similar links) in a dedicated **WKWebView** window, and **records** that window with **ScreenCaptureKit** while mixing in **microphone** audio. Output is a **`.mov`** file (H.264 + AAC) under a user-chosen folder, plus optional hooks for post-processing.
 
 ## What it does (runtime flow)
