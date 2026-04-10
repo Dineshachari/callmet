@@ -1,0 +1,28 @@
+name: Callmet
+options:
+  minimumXcodeGenVersion: 2.38.0
+  deploymentTarget:
+    macOS: "13.0"
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    PRODUCT_BUNDLE_IDENTIFIER: "com.dinesh.callmet"
+    DEVELOPMENT_TEAM: ""
+targets:
+  Callmet:
+    type: application
+    platform: macOS
+    deploymentTarget: "13.0"
+    sources:
+      - path: mac-app/Sources
+    settings:
+      base:
+        PRODUCT_NAME: "Callmet"
+        INFOPLIST_KEY_CFBundleDisplayName: "Callmet"
+        INFOPLIST_KEY_CFBundleName: "Callmet"
+        INFOPLIST_KEY_LSApplicationCategoryType: "public.app-category.productivity"
+        INFOPLIST_KEY_NSAppleEventsUsageDescription: "Callmet needs Apple Events permission for local automation."
+        GENERATE_INFOPLIST_FILE: YES
+        CODE_SIGN_STYLE: Automatic
+    scheme:
+      testTargets: []
