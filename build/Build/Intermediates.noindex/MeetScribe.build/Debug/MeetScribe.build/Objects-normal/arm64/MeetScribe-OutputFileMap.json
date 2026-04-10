@@ -1,0 +1,149 @@
+{
+  "" : {
+    "diagnostics" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/MeetScribe-primary.dia",
+    "emit-module-dependencies" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/MeetScribe-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/MeetScribe-primary-emit-module.dia",
+    "pch" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/MeetScribe-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/MeetScribe-primary.swiftdeps"
+  },
+  "/Users/dinesh/Meeting-Bot/AgendaRowView.swift" : {
+    "const-values" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/AgendaRowView.swiftconstvalues",
+    "dependencies" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/AgendaRowView.d",
+    "diagnostics" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/AgendaRowView.dia",
+    "index-unit-output-path" : "/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/AgendaRowView.o",
+    "llvm-bc" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/AgendaRowView.bc",
+    "object" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/AgendaRowView.o",
+    "swift-dependencies" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/AgendaRowView.swiftdeps",
+    "swiftmodule" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/AgendaRowView~partial.swiftmodule"
+  },
+  "/Users/dinesh/Meeting-Bot/AppState.swift" : {
+    "const-values" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/AppState.swiftconstvalues",
+    "dependencies" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/AppState.d",
+    "diagnostics" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/AppState.dia",
+    "index-unit-output-path" : "/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/AppState.o",
+    "llvm-bc" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/AppState.bc",
+    "object" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/AppState.o",
+    "swift-dependencies" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/AppState.swiftdeps",
+    "swiftmodule" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/AppState~partial.swiftmodule"
+  },
+  "/Users/dinesh/Meeting-Bot/Color+Theme.swift" : {
+    "const-values" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/Color+Theme.swiftconstvalues",
+    "dependencies" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/Color+Theme.d",
+    "diagnostics" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/Color+Theme.dia",
+    "index-unit-output-path" : "/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/Color+Theme.o",
+    "llvm-bc" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/Color+Theme.bc",
+    "object" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/Color+Theme.o",
+    "swift-dependencies" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/Color+Theme.swiftdeps",
+    "swiftmodule" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/Color+Theme~partial.swiftmodule"
+  },
+  "/Users/dinesh/Meeting-Bot/DashboardWindowView.swift" : {
+    "const-values" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/DashboardWindowView.swiftconstvalues",
+    "dependencies" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/DashboardWindowView.d",
+    "diagnostics" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/DashboardWindowView.dia",
+    "index-unit-output-path" : "/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/DashboardWindowView.o",
+    "llvm-bc" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/DashboardWindowView.bc",
+    "object" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/DashboardWindowView.o",
+    "swift-dependencies" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/DashboardWindowView.swiftdeps",
+    "swiftmodule" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/DashboardWindowView~partial.swiftmodule"
+  },
+  "/Users/dinesh/Meeting-Bot/FFmpegWriter.swift" : {
+    "const-values" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/FFmpegWriter.swiftconstvalues",
+    "dependencies" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/FFmpegWriter.d",
+    "diagnostics" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/FFmpegWriter.dia",
+    "index-unit-output-path" : "/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/FFmpegWriter.o",
+    "llvm-bc" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/FFmpegWriter.bc",
+    "object" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/FFmpegWriter.o",
+    "swift-dependencies" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/FFmpegWriter.swiftdeps",
+    "swiftmodule" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/FFmpegWriter~partial.swiftmodule"
+  },
+  "/Users/dinesh/Meeting-Bot/HeadlessChromeController.swift" : {
+    "const-values" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/HeadlessChromeController.swiftconstvalues",
+    "dependencies" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/HeadlessChromeController.d",
+    "diagnostics" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/HeadlessChromeController.dia",
+    "index-unit-output-path" : "/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/HeadlessChromeController.o",
+    "llvm-bc" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/HeadlessChromeController.bc",
+    "object" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/HeadlessChromeController.o",
+    "swift-dependencies" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/HeadlessChromeController.swiftdeps",
+    "swiftmodule" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/HeadlessChromeController~partial.swiftmodule"
+  },
+  "/Users/dinesh/Meeting-Bot/LocalWebSocketServer.swift" : {
+    "const-values" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/LocalWebSocketServer.swiftconstvalues",
+    "dependencies" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/LocalWebSocketServer.d",
+    "diagnostics" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/LocalWebSocketServer.dia",
+    "index-unit-output-path" : "/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/LocalWebSocketServer.o",
+    "llvm-bc" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/LocalWebSocketServer.bc",
+    "object" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/LocalWebSocketServer.o",
+    "swift-dependencies" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/LocalWebSocketServer.swiftdeps",
+    "swiftmodule" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/LocalWebSocketServer~partial.swiftmodule"
+  },
+  "/Users/dinesh/Meeting-Bot/MeetScribeApp.swift" : {
+    "const-values" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/MeetScribeApp.swiftconstvalues",
+    "dependencies" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/MeetScribeApp.d",
+    "diagnostics" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/MeetScribeApp.dia",
+    "index-unit-output-path" : "/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/MeetScribeApp.o",
+    "llvm-bc" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/MeetScribeApp.bc",
+    "object" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/MeetScribeApp.o",
+    "swift-dependencies" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/MeetScribeApp.swiftdeps",
+    "swiftmodule" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/MeetScribeApp~partial.swiftmodule"
+  },
+  "/Users/dinesh/Meeting-Bot/MeetingAnalysisView.swift" : {
+    "const-values" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/MeetingAnalysisView.swiftconstvalues",
+    "dependencies" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/MeetingAnalysisView.d",
+    "diagnostics" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/MeetingAnalysisView.dia",
+    "index-unit-output-path" : "/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/MeetingAnalysisView.o",
+    "llvm-bc" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/MeetingAnalysisView.bc",
+    "object" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/MeetingAnalysisView.o",
+    "swift-dependencies" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/MeetingAnalysisView.swiftdeps",
+    "swiftmodule" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/MeetingAnalysisView~partial.swiftmodule"
+  },
+  "/Users/dinesh/Meeting-Bot/MenuBarView.swift" : {
+    "const-values" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/MenuBarView.swiftconstvalues",
+    "dependencies" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/MenuBarView.d",
+    "diagnostics" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/MenuBarView.dia",
+    "index-unit-output-path" : "/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/MenuBarView.o",
+    "llvm-bc" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/MenuBarView.bc",
+    "object" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/MenuBarView.o",
+    "swift-dependencies" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/MenuBarView.swiftdeps",
+    "swiftmodule" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/MenuBarView~partial.swiftmodule"
+  },
+  "/Users/dinesh/Meeting-Bot/RecordingPipelineCoordinator.swift" : {
+    "const-values" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/RecordingPipelineCoordinator.swiftconstvalues",
+    "dependencies" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/RecordingPipelineCoordinator.d",
+    "diagnostics" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/RecordingPipelineCoordinator.dia",
+    "index-unit-output-path" : "/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/RecordingPipelineCoordinator.o",
+    "llvm-bc" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/RecordingPipelineCoordinator.bc",
+    "object" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/RecordingPipelineCoordinator.o",
+    "swift-dependencies" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/RecordingPipelineCoordinator.swiftdeps",
+    "swiftmodule" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/RecordingPipelineCoordinator~partial.swiftmodule"
+  },
+  "/Users/dinesh/Meeting-Bot/SettingsDetailView.swift" : {
+    "const-values" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/SettingsDetailView.swiftconstvalues",
+    "dependencies" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/SettingsDetailView.d",
+    "diagnostics" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/SettingsDetailView.dia",
+    "index-unit-output-path" : "/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/SettingsDetailView.o",
+    "llvm-bc" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/SettingsDetailView.bc",
+    "object" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/SettingsDetailView.o",
+    "swift-dependencies" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/SettingsDetailView.swiftdeps",
+    "swiftmodule" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/SettingsDetailView~partial.swiftmodule"
+  },
+  "/Users/dinesh/Meeting-Bot/SidebarView.swift" : {
+    "const-values" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/SidebarView.swiftconstvalues",
+    "dependencies" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/SidebarView.d",
+    "diagnostics" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/SidebarView.dia",
+    "index-unit-output-path" : "/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/SidebarView.o",
+    "llvm-bc" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/SidebarView.bc",
+    "object" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/SidebarView.o",
+    "swift-dependencies" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/SidebarView.swiftdeps",
+    "swiftmodule" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/SidebarView~partial.swiftmodule"
+  },
+  "/Users/dinesh/Meeting-Bot/Typography.swift" : {
+    "const-values" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/Typography.swiftconstvalues",
+    "dependencies" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/Typography.d",
+    "diagnostics" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/Typography.dia",
+    "index-unit-output-path" : "/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/Typography.o",
+    "llvm-bc" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/Typography.bc",
+    "object" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/Typography.o",
+    "swift-dependencies" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/Typography.swiftdeps",
+    "swiftmodule" : "/Users/dinesh/Meeting-Bot/build/Build/Intermediates.noindex/MeetScribe.build/Debug/MeetScribe.build/Objects-normal/arm64/Typography~partial.swiftmodule"
+  }
+}

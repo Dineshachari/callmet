@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>logFormatVersion</key>
+	<integer>12</integer>
+	<key>logs</key>
+	<dict>
+		<key>5379EE1E-CA29-4F41-9239-9E5F1E74C3CA</key>
+		<dict>
+			<key>className</key>
+			<string>IDECommandLineBuildLog</string>
+			<key>documentTypeString</key>
+			<string>&lt;nil&gt;</string>
+			<key>domainType</key>
+			<string>Xcode.IDEActivityLogDomainType.BuildLog</string>
+			<key>fileName</key>
+			<string>5379EE1E-CA29-4F41-9239-9E5F1E74C3CA.xcactivitylog</string>
+			<key>hasPrimaryLog</key>
+			<true/>
+			<key>primaryObservable</key>
+			<dict>
+				<key>highLevelStatus</key>
+				<string>W</string>
+				<key>totalNumberOfAnalyzerIssues</key>
+				<integer>0</integer>
+				<key>totalNumberOfErrors</key>
+				<integer>0</integer>
+				<key>totalNumberOfTestFailures</key>
+				<integer>0</integer>
+				<key>totalNumberOfWarnings</key>
+				<integer>8</integer>
+			</dict>
+			<key>schemeIdentifier-containerName</key>
+			<string>MeetScribe project</string>
+			<key>schemeIdentifier-schemeName</key>
+			<string>MeetScribe</string>
+			<key>schemeIdentifier-sharedScheme</key>
+			<integer>1</integer>
+			<key>signature</key>
+			<string>Building project MeetScribe with scheme MeetScribe and configuration Debug</string>
+			<key>timeStartedRecording</key>
+			<real>797537108.57296598</real>
+			<key>timeStoppedRecording</key>
+			<real>797537112.19384694</real>
+			<key>title</key>
+			<string>Building project MeetScribe with scheme MeetScribe and configuration Debug</string>
+			<key>uniqueIdentifier</key>
+			<string>5379EE1E-CA29-4F41-9239-9E5F1E74C3CA</string>
+		</dict>
+		<key>A2913DBD-AB8C-41EC-8607-D628B20A5A2A</key>
+		<dict>
+			<key>className</key>
+			<string>IDECommandLineBuildLog</string>
+			<key>documentTypeString</key>
+			<string>&lt;nil&gt;</string>
+			<key>domainType</key>
+			<string>Xcode.IDEActivityLogDomainType.BuildLog</string>
+			<key>fileName</key>
+			<string>A2913DBD-AB8C-41EC-8607-D628B20A5A2A.xcactivitylog</string>
+			<key>hasPrimaryLog</key>
+			<true/>
+			<key>primaryObservable</key>
+			<dict>
+				<key>highLevelStatus</key>
+				<string>W</string>
+				<key>totalNumberOfAnalyzerIssues</key>
+				<integer>0</integer>
+				<key>totalNumberOfErrors</key>
+				<integer>0</integer>
+				<key>totalNumberOfTestFailures</key>
+				<integer>0</integer>
+				<key>totalNumberOfWarnings</key>
+				<integer>8</integer>
+			</dict>
+			<key>schemeIdentifier-containerName</key>
+			<string>MeetScribe project</string>
+			<key>schemeIdentifier-schemeName</key>
+			<string>MeetScribe</string>
+			<key>schemeIdentifier-sharedScheme</key>
+			<integer>1</integer>
+			<key>signature</key>
+			<string>Building project MeetScribe with scheme MeetScribe and configuration Debug</string>
+			<key>timeStartedRecording</key>
+			<real>797537421.29719698</real>
+			<key>timeStoppedRecording</key>
+			<real>797537424.370965</real>
+			<key>title</key>
+			<string>Building project MeetScribe with scheme MeetScribe and configuration Debug</string>
+			<key>uniqueIdentifier</key>
+			<string>A2913DBD-AB8C-41EC-8607-D628B20A5A2A</string>
+		</dict>
+		<key>F0C2161A-AEE0-4964-9EDF-14DEC9BC61C1</key>
+		<dict>
+			<key>className</key>
+			<string>IDECommandLineBuildLog</string>
+			<key>documentTypeString</key>
+			<string>&lt;nil&gt;</string>
+			<key>domainType</key>
+			<string>Xcode.IDEActivityLogDomainType.BuildLog</string>
+			<key>fileName</key>
+			<string>F0C2161A-AEE0-4964-9EDF-14DEC9BC61C1.xcactivitylog</string>
+			<key>hasPrimaryLog</key>
+			<true/>
+			<key>primaryObservable</key>
+			<dict>
+				<key>highLevelStatus</key>
+				<string>W</string>
+				<key>totalNumberOfAnalyzerIssues</key>
+				<integer>0</integer>
+				<key>totalNumberOfErrors</key>
+				<integer>0</integer>
+				<key>totalNumberOfTestFailures</key>
+				<integer>0</integer>
+				<key>totalNumberOfWarnings</key>
+				<integer>8</integer>
+			</dict>
+			<key>schemeIdentifier-containerName</key>
+			<string>MeetScribe project</string>
+			<key>schemeIdentifier-schemeName</key>
+			<string>MeetScribe</string>
+			<key>schemeIdentifier-sharedScheme</key>
+			<integer>1</integer>
+			<key>signature</key>
+			<string>Building project MeetScribe with scheme MeetScribe and configuration Debug</string>
+			<key>timeStartedRecording</key>
+			<real>797537278.86391103</real>
+			<key>timeStoppedRecording</key>
+			<real>797537286.22231996</real>
+			<key>title</key>
+			<string>Building project MeetScribe with scheme MeetScribe and configuration Debug</string>
+			<key>uniqueIdentifier</key>
+			<string>F0C2161A-AEE0-4964-9EDF-14DEC9BC61C1</string>
+		</dict>
+		<key>FF4E293E-3A07-4BD0-AF70-69FC2F7FB849</key>
+		<dict>
+			<key>className</key>
+			<string>IDECommandLineBuildLog</string>
+			<key>documentTypeString</key>
+			<string>&lt;nil&gt;</string>
+			<key>domainType</key>
+			<string>Xcode.IDEActivityLogDomainType.BuildLog</string>
+			<key>fileName</key>
+			<string>FF4E293E-3A07-4BD0-AF70-69FC2F7FB849.xcactivitylog</string>
+			<key>hasPrimaryLog</key>
+			<true/>
+			<key>primaryObservable</key>
+			<dict>
+				<key>highLevelStatus</key>
+				<string>W</string>
+				<key>totalNumberOfAnalyzerIssues</key>
+				<integer>0</integer>
+				<key>totalNumberOfErrors</key>
+				<integer>0</integer>
+				<key>totalNumberOfTestFailures</key>
+				<integer>0</integer>
+				<key>totalNumberOfWarnings</key>
+				<integer>8</integer>
+			</dict>
+			<key>schemeIdentifier-containerName</key>
+			<string>MeetScribe project</string>
+			<key>schemeIdentifier-schemeName</key>
+			<string>MeetScribe</string>
+			<key>schemeIdentifier-sharedScheme</key>
+			<integer>1</integer>
+			<key>signature</key>
+			<string>Building project MeetScribe with scheme MeetScribe and configuration Debug</string>
+			<key>timeStartedRecording</key>
+			<real>797537684.93729699</real>
+			<key>timeStoppedRecording</key>
+			<real>797537691.58381999</real>
+			<key>title</key>
+			<string>Building project MeetScribe with scheme MeetScribe and configuration Debug</string>
+			<key>uniqueIdentifier</key>
+			<string>FF4E293E-3A07-4BD0-AF70-69FC2F7FB849</string>
+		</dict>
+	</dict>
+</dict>
+</plist>
