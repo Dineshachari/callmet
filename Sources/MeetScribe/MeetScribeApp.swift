@@ -1,0 +1,388 @@
+import AppKit
+import ServiceManagement
+import SwiftUI
+
+@main
+struct MeetScribeApp: App {
+    @NSApplicationDelegateAdaptor(AppDelegate.self) var delegate
+
+    var body: some Scene {
+        Settings {
+            EmptyView()
+        }
+    }
+}
+
+@MainActor
+final class AppDelegate: NSObject, NSApplicationDelegate {
+    private let scheduler = MeetingScheduler()
+    private let controller = MeetingController()
+    private let outputFolderStore = OutputFolderStore.shared
+    private let botSettings = BotSettingsStore.shared
+    private var statusItem: NSStatusItem?
+    private var menu: NSMenu?
+    private var monitoringItem: NSMenuItem?
+    private var stopRecordingItem: NSMenuItem?
+    private var joinItem: NSMenuItem?
+    private var botNameItem: NSMenuItem?
+    private var botNameStatusItem: NSMenuItem?
+    private var outputFolderItem: NSMenuItem?
+    private var permissionsItem: NSMenuItem?
+    private var observers: [NSObjectProtocol] = []
+    private var isMonitoring = false
+
+    func applicationDidFinishLaunching(_ notification: Notification) {
+        NSApp.setActivationPolicy(.accessory)
+
+        statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
+        statusItem?.button?.title = "MeetScribe"
+        statusItem?.menu = makeMenu()
+
+        startMonitoring()
+        wireNotifications()
+        registerLoginItemIfPossible()
+        presentPermissionSetupIfNeeded()
+    }
+
+    func applicationWillTerminate(_ notification: Notification) {
+        scheduler.stop()
+        observers.forEach(NotificationCenter.default.removeObserver)
+        observers.removeAll()
+    }
+
+    @objc private func startMonitoring() {
+        guard !isMonitoring else { return }
+        isMonitoring = true
+        scheduler.start()
+        updateMenuState()
+    }
+
+    @objc private func stopMonitoring() {
+        guard isMonitoring else { return }
+        isMonitoring = false
+        scheduler.stop()
+        updateMenuState()
+    }
+
+    @objc private func stopRecording() {
+        Task { @MainActor in
+            await controller.stopRecording()
+        }
+    }
+
+    @objc private func openOutputFolder() {
+        NSWorkspace.shared.open(outputFolderStore.recordingDirectoryURL())
+    }
+
+    @objc private func chooseOutputFolder() {
+        let panel = NSOpenPanel()
+        panel.title = "Choose Output Folder"
+        panel.prompt = "Choose"
+        panel.canChooseFiles = false
+        panel.canChooseDirectories = true
+        panel.canCreateDirectories = true
+        panel.allowsMultipleSelection = false
+        panel.directoryURL = outputFolderStore.recordingDirectoryURL()
+
+        guard panel.runModal() == .OK, let folderURL = panel.url else {
+            return
+        }
+
+        outputFolderStore.selectedFolderURL = folderURL
+        updateMenuState()
+    }
+
+    @objc private func joinMeetingLink() {
+        let result = promptForMeetingLink()
+        guard let result else { return }
+        controller.joinManualMeeting(url: result.url, meetingName: result.meetingName)
+    }
+
+    @objc private func setBotDisplayName() {
+        let current = botSettings.displayName
+        let result = promptForSingleValue(
+            title: "Bot Display Name",
+            message: "Choose the name that meeting apps should show for MeetScribe.",
+            placeholder: "MeetScribe",
+            defaultValue: current
+        )
+
+        guard let result else { return }
+        botSettings.displayName = result
+        updateMenuState()
+    }
+
+    @objc private func grantPermissions() {
+        Task { @MainActor in
+            await requestPermissionsAndMaybeShowAlert()
+        }
+    }
+
+    @objc private func quitApp() {
+        NSApp.terminate(nil)
+    }
+
+    private func wireNotifications() {
+        let observer = NotificationCenter.default.addObserver(
+            forName: .joinMeeting,
+            object: nil,
+            queue: .main
+        ) { [weak self] note in
+            guard let meetingRequest = note.object as? MeetingRequest else { return }
+            Task { @MainActor [weak self] in
+                self?.controller.handle(meetingRequest: meetingRequest)
+            }
+        }
+        observers.append(observer)
+
+        let captureObserver = NotificationCenter.default.addObserver(
+            forName: .captureStopped,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            Task { @MainActor [weak self] in
+                await self?.controller.stopRecording()
+                self?.updateMenuState()
+            }
+        }
+        observers.append(captureObserver)
+    }
+
+    private func makeMenu() -> NSMenu {
+        let menu = NSMenu()
+
+        let monitoring = NSMenuItem(title: "Start Monitoring", action: #selector(startMonitoring), keyEquivalent: "")
+        monitoring.target = self
+        menu.addItem(monitoring)
+        monitoringItem = monitoring
+
+        menu.addItem(.separator())
+
+        let stopRecording = NSMenuItem(title: "Stop Recording", action: #selector(stopRecording), keyEquivalent: "")
+        stopRecording.target = self
+        menu.addItem(stopRecording)
+        stopRecordingItem = stopRecording
+
+        let join = NSMenuItem(title: "Join Meeting Link…", action: #selector(joinMeetingLink), keyEquivalent: "")
+        join.target = self
+        menu.addItem(join)
+        joinItem = join
+
+        let choose = NSMenuItem(title: "Choose Output Folder…", action: #selector(chooseOutputFolder), keyEquivalent: "")
+        choose.target = self
+        menu.addItem(choose)
+
+        let folderStatus = NSMenuItem(title: "Output Folder: \(outputFolderStore.displayName())", action: nil, keyEquivalent: "")
+        folderStatus.isEnabled = false
+        menu.addItem(folderStatus)
+        outputFolderItem = folderStatus
+
+        let folder = NSMenuItem(title: "Open Output Folder", action: #selector(openOutputFolder), keyEquivalent: "")
+        folder.target = self
+        menu.addItem(folder)
+
+        menu.addItem(.separator())
+
+        let botName = NSMenuItem(title: "Bot Display Name…", action: #selector(setBotDisplayName), keyEquivalent: "")
+        botName.target = self
+        menu.addItem(botName)
+        botNameItem = botName
+
+        let botNameStatus = NSMenuItem(title: "Bot Name: \(botSettings.displayName)", action: nil, keyEquivalent: "")
+        botNameStatus.isEnabled = false
+        menu.addItem(botNameStatus)
+        botNameStatusItem = botNameStatus
+
+        let permissions = NSMenuItem(title: "Grant Permissions…", action: #selector(grantPermissions), keyEquivalent: "")
+        permissions.target = self
+        menu.addItem(permissions)
+        permissionsItem = permissions
+
+        menu.addItem(.separator())
+
+        let quit = NSMenuItem(title: "Quit MeetScribe", action: #selector(quitApp), keyEquivalent: "q")
+        quit.target = self
+        menu.addItem(quit)
+
+        self.menu = menu
+        updateMenuState()
+        return menu
+    }
+
+    private func updateMenuState() {
+        monitoringItem?.title = isMonitoring ? "Stop Monitoring" : "Start Monitoring"
+        monitoringItem?.action = isMonitoring ? #selector(stopMonitoring) : #selector(startMonitoring)
+        stopRecordingItem?.isEnabled = true
+        joinItem?.isEnabled = true
+        botNameItem?.isEnabled = true
+        permissionsItem?.isEnabled = true
+        statusItem?.button?.title = isMonitoring ? "MeetScribe ●" : "MeetScribe ○"
+        outputFolderItem?.title = "Output Folder: \(outputFolderStore.displayName())"
+        botNameStatusItem?.title = "Bot Name: \(botSettings.displayName)"
+    }
+
+    private func registerLoginItemIfPossible() {
+        guard Bundle.main.bundleURL.pathExtension == "app" else { return }
+        _ = try? SMAppService.mainApp.register()
+    }
+
+    private func presentPermissionSetupIfNeeded() {
+        Task { @MainActor in
+            let snapshot = await Permissions.currentSnapshot()
+            guard !snapshot.allGranted else {
+                return
+            }
+            try? await Task.sleep(nanoseconds: 750_000_000)
+            await presentPermissionSetupBox(snapshot: snapshot)
+        }
+    }
+
+    private func requestPermissionsAndMaybeShowAlert() async {
+        await presentPermissionSetupBox(snapshot: await Permissions.currentSnapshot())
+    }
+
+    private func presentPermissionSetupBox(snapshot: PermissionSnapshot) async {
+        let alert = NSAlert()
+        alert.messageText = "MeetScribe needs permissions"
+        alert.informativeText = "Grant access to Calendar, Microphone, and Screen Recording so MeetScribe can auto-join and record meetings."
+        alert.addButton(withTitle: "Grant Permissions")
+        alert.addButton(withTitle: "Later")
+        alert.accessoryView = makePermissionAccessoryView(snapshot: snapshot)
+
+        NSApp.activate(ignoringOtherApps: true)
+        let response = alert.runModal()
+        guard response == .alertFirstButtonReturn else {
+            return
+        }
+
+        let after = await Permissions.requestMissingPermissions()
+        showPermissionResultBox(snapshot: after)
+    }
+
+    private func showPermissionResultBox(snapshot: PermissionSnapshot) {
+        let alert = NSAlert()
+        if snapshot.allGranted {
+            alert.messageText = "Permissions granted"
+            alert.informativeText = "MeetScribe now has Calendar, Microphone, and Screen Recording access."
+        } else {
+            alert.messageText = "Some permissions are still missing"
+            alert.informativeText = "Open System Settings > Privacy & Security if macOS did not show a prompt for one of these."
+        }
+        alert.addButton(withTitle: "OK")
+        alert.accessoryView = makePermissionAccessoryView(snapshot: snapshot)
+        NSApp.activate(ignoringOtherApps: true)
+        alert.runModal()
+    }
+
+    private func makePermissionAccessoryView(snapshot: PermissionSnapshot) -> NSView {
+        let stack = NSStackView()
+        stack.orientation = .vertical
+        stack.alignment = .leading
+        stack.spacing = 6
+
+        for line in snapshot.summaryLines() {
+            let label = NSTextField(labelWithString: line)
+            label.font = .systemFont(ofSize: NSFont.systemFontSize)
+            stack.addArrangedSubview(label)
+        }
+
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        let container = NSView(frame: NSRect(x: 0, y: 0, width: 320, height: 80))
+        container.addSubview(stack)
+        NSLayoutConstraint.activate([
+            stack.leadingAnchor.constraint(equalTo: container.leadingAnchor),
+            stack.trailingAnchor.constraint(equalTo: container.trailingAnchor),
+            stack.topAnchor.constraint(equalTo: container.topAnchor),
+            stack.bottomAnchor.constraint(equalTo: container.bottomAnchor)
+        ])
+        return container
+    }
+
+    private func promptForMeetingLink() -> (url: URL, meetingName: String)? {
+        let alert = NSAlert()
+        alert.messageText = "Join Meeting Link"
+        alert.informativeText = "Paste the meeting link and an optional display name for the log."
+        alert.addButton(withTitle: "Join")
+        alert.addButton(withTitle: "Cancel")
+
+        let stack = NSStackView()
+        stack.orientation = .vertical
+        stack.alignment = .leading
+        stack.spacing = 8
+
+        let linkLabel = NSTextField(labelWithString: "Meeting link")
+        let linkField = NSTextField(string: "")
+        linkField.placeholderString = "https://meet.google.com/..."
+
+        let nameLabel = NSTextField(labelWithString: "Meeting name")
+        let nameField = NSTextField(string: "")
+        nameField.placeholderString = "Optional"
+
+        [linkLabel, linkField, nameLabel, nameField].forEach {
+            if let field = $0 as? NSTextField, field.isEditable {
+                field.translatesAutoresizingMaskIntoConstraints = false
+            }
+            stack.addArrangedSubview($0)
+        }
+
+        let container = NSView(frame: NSRect(x: 0, y: 0, width: 360, height: 120))
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        container.addSubview(stack)
+        NSLayoutConstraint.activate([
+            stack.leadingAnchor.constraint(equalTo: container.leadingAnchor),
+            stack.trailingAnchor.constraint(equalTo: container.trailingAnchor),
+            stack.topAnchor.constraint(equalTo: container.topAnchor),
+            stack.bottomAnchor.constraint(equalTo: container.bottomAnchor)
+        ])
+
+        alert.accessoryView = container
+        NSApp.activate(ignoringOtherApps: true)
+        guard alert.runModal() == .alertFirstButtonReturn else { return nil }
+        let rawLink = linkField.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !rawLink.isEmpty else { return nil }
+
+        let resolvedURL = MeetingLinkParser.extractMeetingURL(from: rawLink)
+            ?? URL(string: rawLink)
+            ?? URL(string: "https://\(rawLink)")
+
+        guard let url = resolvedURL else {
+            let errorAlert = NSAlert()
+            errorAlert.messageText = "Invalid meeting link"
+            errorAlert.informativeText = "Paste a valid Google Meet, Zoom, or Teams link."
+            errorAlert.runModal()
+            return nil
+        }
+
+        let meetingName = nameField.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
+        let resolvedName = meetingName.isEmpty ? (url.host ?? "Manual Meeting") : meetingName
+        return (url: url, meetingName: resolvedName)
+    }
+
+    private func promptForSingleValue(title: String, message: String, placeholder: String, defaultValue: String) -> String? {
+        let alert = NSAlert()
+        alert.messageText = title
+        alert.informativeText = message
+        alert.addButton(withTitle: "Save")
+        alert.addButton(withTitle: "Cancel")
+
+        let field = NSTextField(string: defaultValue)
+        field.placeholderString = placeholder
+        field.frame = NSRect(x: 0, y: 0, width: 320, height: 24)
+
+        let container = NSView(frame: NSRect(x: 0, y: 0, width: 320, height: 32))
+        container.addSubview(field)
+        NSLayoutConstraint.activate([
+            field.leadingAnchor.constraint(equalTo: container.leadingAnchor),
+            field.trailingAnchor.constraint(equalTo: container.trailingAnchor),
+            field.topAnchor.constraint(equalTo: container.topAnchor),
+            field.bottomAnchor.constraint(equalTo: container.bottomAnchor)
+        ])
+        alert.accessoryView = container
+
+        NSApp.activate(ignoringOtherApps: true)
+        guard alert.runModal() == .alertFirstButtonReturn else { return nil }
+
+        let value = field.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
+        return value.isEmpty ? nil : value
+    }
+}

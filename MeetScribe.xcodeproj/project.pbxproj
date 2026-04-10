@@ -1,0 +1,473 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		BF0000000000000000000001 /* MeetScribeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FILE0000000000000000000002 /* MeetScribeApp.swift */; };
+		BF0000000000000000000002 /* Permissions.swift in Sources */ = {isa = PBXBuildFile; fileRef = FILE0000000000000000000003 /* Permissions.swift */; };
+		BF0000000000000000000003 /* KeepAwake.swift in Sources */ = {isa = PBXBuildFile; fileRef = FILE0000000000000000000004 /* KeepAwake.swift */; };
+		BF0000000000000000000004 /* WebViewPool.swift in Sources */ = {isa = PBXBuildFile; fileRef = FILE0000000000000000000005 /* WebViewPool.swift */; };
+		BF0000000000000000000005 /* MeetingScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = FILE0000000000000000000006 /* MeetingScheduler.swift */; };
+		BF0000000000000000000006 /* SegmentWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = FILE0000000000000000000007 /* SegmentWriter.swift */; };
+		BF0000000000000000000007 /* AudioMixer.swift in Sources */ = {isa = PBXBuildFile; fileRef = FILE0000000000000000000008 /* AudioMixer.swift */; };
+		BF0000000000000000000008 /* ScreenCaptureSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = FILE0000000000000000000009 /* ScreenCaptureSession.swift */; };
+		BF0000000000000000000009 /* MeetingJoiner.swift in Sources */ = {isa = PBXBuildFile; fileRef = FILE000000000000000000000A /* MeetingJoiner.swift */; };
+		BF0000000000000000000010 /* TranscriptionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FILE000000000000000000000B /* TranscriptionService.swift */; };
+		BF0000000000000000000011 /* MeetingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FILE000000000000000000000C /* MeetingController.swift */; };
+		BF0000000000000000000012 /* join_meet.js in Resources */ = {isa = PBXBuildFile; fileRef = FILE000000000000000000000E /* join_meet.js */; };
+		BF0000000000000000000013 /* join_zoom.js in Resources */ = {isa = PBXBuildFile; fileRef = FILE000000000000000000000F /* join_zoom.js */; };
+		BF0000000000000000000014 /* MeetingLinkParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = FILE0000000000000000000010 /* MeetingLinkParser.swift */; };
+		BF0000000000000000000015 /* MeetingLinkParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FILE0000000000000000000011 /* MeetingLinkParserTests.swift */; };
+		BF0000000000000000000016 /* OutputFolderStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = FILE0000000000000000000012 /* OutputFolderStore.swift */; };
+		BF0000000000000000000017 /* MeetingRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = FILE0000000000000000000013 /* MeetingRequest.swift */; };
+		BF0000000000000000000018 /* BotSettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = FILE0000000000000000000014 /* BotSettingsStore.swift */; };
+		BF0000000000000000000019 /* MeetingSessionLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = FILE0000000000000000000015 /* MeetingSessionLogger.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		PROD00000000000000000001 /* MeetScribe.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MeetScribe.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		FILE0000000000000000000001 /* AppInfo.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = AppInfo.plist; sourceTree = SOURCE_ROOT; };
+		FILE0000000000000000000002 /* MeetScribeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/MeetScribe/MeetScribeApp.swift; sourceTree = SOURCE_ROOT; };
+		FILE0000000000000000000003 /* Permissions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/MeetScribe/Permissions.swift; sourceTree = SOURCE_ROOT; };
+		FILE0000000000000000000004 /* KeepAwake.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/MeetScribe/KeepAwake.swift; sourceTree = SOURCE_ROOT; };
+		FILE0000000000000000000005 /* WebViewPool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/MeetScribe/WebViewPool.swift; sourceTree = SOURCE_ROOT; };
+		FILE0000000000000000000006 /* MeetingScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/MeetScribe/MeetingScheduler.swift; sourceTree = SOURCE_ROOT; };
+		FILE0000000000000000000007 /* SegmentWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/MeetScribe/SegmentWriter.swift; sourceTree = SOURCE_ROOT; };
+		FILE0000000000000000000008 /* AudioMixer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/MeetScribe/AudioMixer.swift; sourceTree = SOURCE_ROOT; };
+		FILE0000000000000000000009 /* ScreenCaptureSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/MeetScribe/ScreenCaptureSession.swift; sourceTree = SOURCE_ROOT; };
+		FILE000000000000000000000A /* MeetingJoiner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/MeetScribe/MeetingJoiner.swift; sourceTree = SOURCE_ROOT; };
+		FILE000000000000000000000B /* TranscriptionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/MeetScribe/TranscriptionService.swift; sourceTree = SOURCE_ROOT; };
+		FILE000000000000000000000C /* MeetingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/MeetScribe/MeetingController.swift; sourceTree = SOURCE_ROOT; };
+		FILE000000000000000000000E /* join_meet.js */ = {isa = PBXFileReference; lastKnownFileType = text.script.javascript; path = Sources/MeetScribe/Resources/Assets/join_meet.js; sourceTree = SOURCE_ROOT; };
+		FILE000000000000000000000F /* join_zoom.js */ = {isa = PBXFileReference; lastKnownFileType = text.script.javascript; path = Sources/MeetScribe/Resources/Assets/join_zoom.js; sourceTree = SOURCE_ROOT; };
+		FILE0000000000000000000010 /* MeetingLinkParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/MeetScribe/MeetingLinkParser.swift; sourceTree = SOURCE_ROOT; };
+		FILE0000000000000000000011 /* MeetingLinkParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests/MeetScribeTests/MeetingLinkParserTests.swift; sourceTree = SOURCE_ROOT; };
+		FILE0000000000000000000012 /* OutputFolderStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/MeetScribe/OutputFolderStore.swift; sourceTree = SOURCE_ROOT; };
+		FILE0000000000000000000013 /* MeetingRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/MeetScribe/MeetingRequest.swift; sourceTree = SOURCE_ROOT; };
+		FILE0000000000000000000014 /* BotSettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/MeetScribe/BotSettingsStore.swift; sourceTree = SOURCE_ROOT; };
+		FILE0000000000000000000015 /* MeetingSessionLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/MeetScribe/MeetingSessionLogger.swift; sourceTree = SOURCE_ROOT; };
+		PROD00000000000000000002 /* MeetScribeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MeetScribeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		PHAS00000000000000000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		PHAS00000000000000000005 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		GROUP00000000000000000001 = {
+			isa = PBXGroup;
+			children = (
+				FILE0000000000000000000001 /* AppInfo.plist */,
+				GROUP00000000000000000002 /* MeetScribe */,
+				GROUP00000000000000000006 /* MeetScribeTests */,
+				GROUP00000000000000000004 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		GROUP00000000000000000002 /* MeetScribe */ = {
+			isa = PBXGroup;
+			children = (
+				FILE0000000000000000000002 /* MeetScribeApp.swift */,
+				FILE000000000000000000000C /* MeetingController.swift */,
+				FILE000000000000000000000A /* MeetingJoiner.swift */,
+				FILE0000000000000000000006 /* MeetingScheduler.swift */,
+				FILE0000000000000000000008 /* AudioMixer.swift */,
+				FILE0000000000000000000003 /* Permissions.swift */,
+				FILE0000000000000000000004 /* KeepAwake.swift */,
+				FILE0000000000000000000007 /* SegmentWriter.swift */,
+				FILE0000000000000000000012 /* OutputFolderStore.swift */,
+				FILE0000000000000000000013 /* MeetingRequest.swift */,
+				FILE0000000000000000000014 /* BotSettingsStore.swift */,
+				FILE0000000000000000000015 /* MeetingSessionLogger.swift */,
+				FILE0000000000000000000009 /* ScreenCaptureSession.swift */,
+				FILE000000000000000000000B /* TranscriptionService.swift */,
+				GROUP00000000000000000005 /* Resources */,
+			);
+			path = Sources/MeetScribe;
+			sourceTree = SOURCE_ROOT;
+		};
+		GROUP00000000000000000005 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				GROUP00000000000000000003 /* Assets */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		GROUP00000000000000000003 /* Assets */ = {
+			isa = PBXGroup;
+			children = (
+				FILE000000000000000000000E /* join_meet.js */,
+				FILE000000000000000000000F /* join_zoom.js */,
+			);
+			path = Assets;
+			sourceTree = "<group>";
+		};
+		GROUP00000000000000000004 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				PROD00000000000000000001 /* MeetScribe.app */,
+				PROD00000000000000000002 /* MeetScribeTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		GROUP00000000000000000006 /* MeetScribeTests */ = {
+			isa = PBXGroup;
+			children = (
+				FILE0000000000000000000011 /* MeetingLinkParserTests.swift */,
+			);
+			path = Tests/MeetScribeTests;
+			sourceTree = SOURCE_ROOT;
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		TARG00000000000000000001 /* MeetScribe */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CLST00000000000000000002 /* Build configuration list for PBXNativeTarget "MeetScribe" */;
+			buildPhases = (
+				PHAS00000000000000000001 /* Frameworks */,
+				PHAS00000000000000000002 /* Sources */,
+				PHAS00000000000000000003 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MeetScribe;
+			productName = MeetScribe;
+			productReference = PROD00000000000000000001 /* MeetScribe.app */;
+			productType = "com.apple.product-type.application";
+		};
+		TARG00000000000000000002 /* MeetScribeTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CLST00000000000000000003 /* Build configuration list for PBXNativeTarget "MeetScribeTests" */;
+			buildPhases = (
+				PHAS00000000000000000005 /* Frameworks */,
+				PHAS00000000000000000004 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				DEP00000000000000000001 /* PBXTargetDependency */,
+			);
+			name = MeetScribeTests;
+			productName = MeetScribeTests;
+			productReference = PROD00000000000000000002 /* MeetScribeTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		PROJ00000000000000000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastSwiftUpdateCheck = 2600;
+				LastUpgradeCheck = 2600;
+				TargetAttributes = {
+					TARG00000000000000000001 = {
+						CreatedOnToolsVersion = 26.4;
+					};
+					TARG00000000000000000002 = {
+						CreatedOnToolsVersion = 26.4;
+					};
+				};
+			};
+			buildConfigurationList = CLST00000000000000000001 /* Build configuration list for PBXProject "MeetScribe" */;
+			compatibilityVersion = "Xcode 16.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = GROUP00000000000000000001;
+			productRefGroup = GROUP00000000000000000004 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				TARG00000000000000000001 /* MeetScribe */,
+				TARG00000000000000000002 /* MeetScribeTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		PHAS00000000000000000003 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BF0000000000000000000012 /* join_meet.js in Resources */,
+				BF0000000000000000000013 /* join_zoom.js in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		PHAS00000000000000000004 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BF0000000000000000000015 /* MeetingLinkParserTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		PHAS00000000000000000002 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BF0000000000000000000001 /* MeetScribeApp.swift in Sources */,
+				BF0000000000000000000011 /* MeetingController.swift in Sources */,
+				BF0000000000000000000009 /* MeetingJoiner.swift in Sources */,
+				BF0000000000000000000005 /* MeetingScheduler.swift in Sources */,
+				BF0000000000000000000007 /* AudioMixer.swift in Sources */,
+				BF0000000000000000000002 /* Permissions.swift in Sources */,
+				BF0000000000000000000003 /* KeepAwake.swift in Sources */,
+				BF0000000000000000000006 /* SegmentWriter.swift in Sources */,
+				BF0000000000000000000008 /* ScreenCaptureSession.swift in Sources */,
+				BF0000000000000000000010 /* TranscriptionService.swift in Sources */,
+				BF0000000000000000000016 /* OutputFolderStore.swift in Sources */,
+				BF0000000000000000000017 /* MeetingRequest.swift in Sources */,
+				BF0000000000000000000018 /* BotSettingsStore.swift in Sources */,
+				BF0000000000000000000019 /* MeetingSessionLogger.swift in Sources */,
+				BF0000000000000000000004 /* WebViewPool.swift in Sources */,
+				BF0000000000000000000014 /* MeetingLinkParser.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXContainerItemProxy section */
+		PROX00000000000000000001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = PROJ00000000000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = TARG00000000000000000001;
+			remoteInfo = MeetScribe;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXTargetDependency section */
+		DEP00000000000000000001 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = TARG00000000000000000001 /* MeetScribe */;
+			targetProxy = PROX00000000000000000001 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		CFG00000000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				DEFINES_MODULE = YES;
+				ENABLE_HARDENED_RUNTIME = NO;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_PREVIEWS = NO;
+				GENERATE_INFOPLIST_FILE = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INFOPLIST_FILE = AppInfo.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dinesh.meetscribe;
+				PRODUCT_NAME = MeetScribe;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		CFG00000000000000000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				DEFINES_MODULE = YES;
+				ENABLE_HARDENED_RUNTIME = NO;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = AppInfo.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dinesh.meetscribe;
+				PRODUCT_NAME = MeetScribe;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		CFG00000000000000000003 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = NO;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = AppInfo.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dinesh.meetscribe;
+				PRODUCT_NAME = MeetScribe;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		CFG00000000000000000004 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = NO;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = AppInfo.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dinesh.meetscribe;
+				PRODUCT_NAME = MeetScribe;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		CFG00000000000000000005 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dinesh.meetscribe.tests;
+				PRODUCT_NAME = MeetScribeTests;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MeetScribe.app/Contents/MacOS/MeetScribe";
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		CFG00000000000000000006 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dinesh.meetscribe.tests;
+				PRODUCT_NAME = MeetScribeTests;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MeetScribe.app/Contents/MacOS/MeetScribe";
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		CLST00000000000000000001 /* Build configuration list for PBXProject "MeetScribe" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CFG00000000000000000001 /* Debug */,
+				CFG00000000000000000002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CLST00000000000000000002 /* Build configuration list for PBXNativeTarget "MeetScribe" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CFG00000000000000000003 /* Debug */,
+				CFG00000000000000000004 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CLST00000000000000000003 /* Build configuration list for PBXNativeTarget "MeetScribeTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CFG00000000000000000005 /* Debug */,
+				CFG00000000000000000006 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = PROJ00000000000000000001 /* Project object */;
+}
