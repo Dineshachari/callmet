@@ -32,6 +32,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var permissionDiagnosticsItem: NSMenuItem?
     private var observers: [NSObjectProtocol] = []
     private var isMonitoring = false
+    private let didShowPermissionOnboardingKey = "com.dinesh.meetscribe.didShowPermissionOnboarding"
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
@@ -298,7 +299,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             }
             try? await Task.sleep(nanoseconds: 750_000_000)
             snapshot = await Permissions.currentSnapshot()
-            await presentPermissionSetupBox(snapshot: snapshot)
+
+            let didShowOnboarding = UserDefaults.standard.bool(forKey: didShowPermissionOnboardingKey)
+            if !didShowOnboarding {
+                UserDefaults.standard.set(true, forKey: didShowPermissionOnboardingKey)
+                await presentPermissionSetupBox(snapshot: snapshot)
+                return
+            }
+
+            // After first run, avoid re-showing broad permission onboarding on every launch.
+            // Only auto-present when there is still a promptable TCC state.
+            let diagnostics = Permissions.diagnostics()
+            let hasPromptableState = diagnostics.calendarStatus == "notDetermined"
+                || diagnostics.microphoneStatus == "notDetermined"
+            if hasPromptableState {
+                await presentPermissionSetupBox(snapshot: snapshot)
+            }
         }
     }
 
@@ -315,16 +331,23 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         alert.messageText = "MeetScribe needs permissions"
         if liveSnapshot.screenRecordingOnlyBlocker {
             alert.informativeText = "Calendar and Microphone are granted. Screen Recording is still not active for this running process. If it is enabled in System Settings, fully quit and reopen MeetScribe."
+            alert.addButton(withTitle: "Quit and Reopen")
+            alert.addButton(withTitle: "Later")
         } else {
             alert.informativeText = "Grant access to Calendar, Microphone, and Screen Recording so MeetScribe can auto-join and record meetings."
+            alert.addButton(withTitle: "Grant Permissions")
+            alert.addButton(withTitle: "Later")
         }
-        alert.addButton(withTitle: "Grant Permissions")
-        alert.addButton(withTitle: "Later")
         alert.accessoryView = makePermissionAccessoryView(snapshot: liveSnapshot)
 
         NSApp.activate(ignoringOtherApps: true)
         let response = alert.runModal()
         guard response == .alertFirstButtonReturn else {
+            return
+        }
+
+        if liveSnapshot.screenRecordingOnlyBlocker {
+            NSApp.terminate(nil)
             return
         }
 
