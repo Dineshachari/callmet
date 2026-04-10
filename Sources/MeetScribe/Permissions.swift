@@ -47,6 +47,7 @@ struct PermissionSnapshot {
     let calendarGranted: Bool
     let microphoneGranted: Bool
     let screenRecordingGranted: Bool
+    let screenRecordingLikelyEnabled: Bool
 
     var allGranted: Bool {
         calendarGranted && microphoneGranted && screenRecordingGranted
@@ -54,6 +55,10 @@ struct PermissionSnapshot {
 
     var screenRecordingOnlyBlocker: Bool {
         calendarGranted && microphoneGranted && !screenRecordingGranted
+    }
+
+    var screenRecordingRelaunchLikely: Bool {
+        screenRecordingOnlyBlocker && screenRecordingLikelyEnabled
     }
 }
 
@@ -64,13 +69,29 @@ struct PermissionDiagnostics {
 }
 
 enum Permissions {
-    private static var calendarGrantedOverride = false
+    private static let calendarGrantedPersistedKey = "com.dinesh.meetscribe.calendarGrantedPersisted"
+    private static let microphoneGrantedPersistedKey = "com.dinesh.meetscribe.microphoneGrantedPersisted"
+    private static let screenRecordingEnabledPersistedKey = "com.dinesh.meetscribe.screenRecordingEnabledPersisted"
+    private static var calendarGrantedOverride: Bool {
+        get { UserDefaults.standard.bool(forKey: calendarGrantedPersistedKey) }
+        set { UserDefaults.standard.set(newValue, forKey: calendarGrantedPersistedKey) }
+    }
+    private static var microphoneGrantedOverride: Bool {
+        get { UserDefaults.standard.bool(forKey: microphoneGrantedPersistedKey) }
+        set { UserDefaults.standard.set(newValue, forKey: microphoneGrantedPersistedKey) }
+    }
+    private static var screenRecordingEnabledOverride: Bool {
+        get { UserDefaults.standard.bool(forKey: screenRecordingEnabledPersistedKey) }
+        set { UserDefaults.standard.set(newValue, forKey: screenRecordingEnabledPersistedKey) }
+    }
 
     static func currentSnapshot() async -> PermissionSnapshot {
+        let screenGranted = isScreenRecordingGranted()
         let snapshot = PermissionSnapshot(
             calendarGranted: isCalendarGranted(),
             microphoneGranted: isMicrophoneGranted(),
-            screenRecordingGranted: isScreenRecordingGranted()
+            screenRecordingGranted: screenGranted,
+            screenRecordingLikelyEnabled: screenGranted || screenRecordingEnabledOverride
         )
         AppTrace.log(
             "permissions.snapshot calendar=\(snapshot.calendarGranted) calendarStatus=\(calendarAuthorizationStatusDescription()) mic=\(snapshot.microphoneGranted) micStatus=\(microphoneAuthorizationStatusDescription()) screen=\(snapshot.screenRecordingGranted)"
@@ -79,7 +100,11 @@ enum Permissions {
     }
 
     static func isScreenRecordingGranted() -> Bool {
-        CGPreflightScreenCaptureAccess()
+        let granted = CGPreflightScreenCaptureAccess()
+        if granted {
+            screenRecordingEnabledOverride = true
+        }
+        return granted
     }
 
     static func openScreenRecordingPrivacyPane() {
@@ -94,12 +119,30 @@ enum Permissions {
             return true
         }
         let granted = CGRequestScreenCaptureAccess()
+        if granted {
+            // Persist successful consent to avoid regressing to "needs access" wording.
+            // Actual capture still depends on preflight becoming true in a future launch.
+            screenRecordingEnabledOverride = true
+        }
         AppTrace.log("permissions.screen requestResult=\(granted)")
         return granted
     }
 
     static func isMicrophoneGranted() -> Bool {
-        AVCaptureDevice.authorizationStatus(for: .audio) == .authorized
+        let status = AVCaptureDevice.authorizationStatus(for: .audio)
+        switch status {
+        case .authorized:
+            microphoneGrantedOverride = true
+            return true
+        case .denied, .restricted:
+            microphoneGrantedOverride = false
+            return false
+        case .notDetermined:
+            // Mirror calendar handling for occasional stale post-consent reads.
+            return microphoneGrantedOverride
+        @unknown default:
+            return false
+        }
     }
 
     static func microphoneAuthorizationStatusDescription() -> String {
@@ -126,24 +169,27 @@ enum Permissions {
 
         return await withCheckedContinuation { continuation in
             AVCaptureDevice.requestAccess(for: .audio) { granted in
-                AppTrace.log("permissions.microphone requestResult=\(granted)")
-                continuation.resume(returning: granted)
+                let status = microphoneAuthorizationStatusDescription()
+                AppTrace.log("permissions.microphone requestResult=\(granted) status=\(status)")
+                if granted { microphoneGrantedOverride = true }
+                continuation.resume(returning: granted || isMicrophoneGranted())
             }
         }
     }
 
     static func isCalendarGranted() -> Bool {
-        if calendarGrantedOverride {
-            return true
-        }
-
         if #available(macOS 14.0, *) {
             let status = EKEventStore.authorizationStatus(for: .event)
             switch status {
             case .authorized, .fullAccess:
+                calendarGrantedOverride = true
                 return true
-            case .denied, .restricted, .notDetermined, .writeOnly:
+            case .denied, .restricted, .writeOnly:
+                calendarGrantedOverride = false
                 return false
+            case .notDetermined:
+                // Some machines briefly keep reporting notDetermined after a YES callback.
+                return calendarGrantedOverride
             @unknown default:
                 return false
             }
@@ -152,9 +198,13 @@ enum Permissions {
         let status = EKEventStore.authorizationStatus(for: .event)
         switch status {
         case .authorized, .fullAccess:
+            calendarGrantedOverride = true
             return true
-        case .denied, .restricted, .notDetermined, .writeOnly:
+        case .denied, .restricted, .writeOnly:
+            calendarGrantedOverride = false
             return false
+        case .notDetermined:
+            return calendarGrantedOverride
         @unknown default:
             return false
         }
@@ -238,7 +288,7 @@ extension PermissionSnapshot {
         let screenLine: String
         if screenRecordingGranted {
             screenLine = "Screen Recording: Granted"
-        } else if screenRecordingOnlyBlocker {
+        } else if screenRecordingRelaunchLikely {
             screenLine = "Screen Recording: Not active for this run (quit and reopen after enabling)"
         } else {
             screenLine = "Screen Recording: Needs Access"
@@ -254,10 +304,12 @@ extension PermissionSnapshot {
 
 extension Permissions {
     static func effectiveSnapshotForDiagnostics() -> PermissionSnapshot {
-        PermissionSnapshot(
+        let screenGranted = isScreenRecordingGranted()
+        return PermissionSnapshot(
             calendarGranted: isCalendarGranted(),
             microphoneGranted: isMicrophoneGranted(),
-            screenRecordingGranted: isScreenRecordingGranted()
+            screenRecordingGranted: screenGranted,
+            screenRecordingLikelyEnabled: screenGranted || screenRecordingEnabledOverride
         )
     }
 
@@ -277,28 +329,35 @@ extension Permissions {
     static func diagnosticsLines() -> [String] {
         let d = diagnostics()
         let effective = effectiveSnapshotForDiagnostics()
+        let allEffectiveGranted = effective.calendarGranted && effective.microphoneGranted && effective.screenRecordingGranted
+
         var lines = [
             "Effective Calendar: \(effective.calendarGranted ? "granted" : "notGranted")",
             "Effective Microphone: \(effective.microphoneGranted ? "granted" : "notGranted")",
-            "Effective Screen Recording: \(effective.screenRecordingGranted ? "granted" : "notGranted")",
-            "Calendar status: \(d.calendarStatus)",
-            "Microphone status: \(d.microphoneStatus)",
-            "Screen Recording preflight: \(d.screenRecordingPreflightGranted ? "granted" : "notGranted")"
+            "Effective Screen Recording: \(effective.screenRecordingGranted ? "granted" : "notGranted")"
         ]
 
-        if d.calendarStatus == "denied" || d.calendarStatus == "restricted" || d.calendarStatus == "writeOnly" {
+        // Keep raw internals only when useful for debugging or when permissions are incomplete.
+        if !allEffectiveGranted || d.calendarStatus != "authorized" || d.microphoneStatus != "authorized" || !d.screenRecordingPreflightGranted {
+            lines.append("Calendar status: \(d.calendarStatus)")
+            lines.append("Microphone status: \(d.microphoneStatus)")
+            lines.append("Screen Recording preflight: \(d.screenRecordingPreflightGranted ? "granted" : "notGranted")")
+            lines.append("Screen Recording persisted consent: \(effective.screenRecordingLikelyEnabled ? "true" : "false")")
+        }
+
+        if !effective.calendarGranted && (d.calendarStatus == "denied" || d.calendarStatus == "restricted" || d.calendarStatus == "writeOnly") {
             lines.append("Calendar: enable in System Settings > Privacy & Security > Calendars.")
-        } else if d.calendarStatus == "notDetermined" {
+        } else if !effective.calendarGranted && d.calendarStatus == "notDetermined" {
             lines.append("Calendar: notDetermined means macOS should still be able to show a prompt.")
         }
 
-        if d.microphoneStatus == "denied" || d.microphoneStatus == "restricted" {
+        if !effective.microphoneGranted && (d.microphoneStatus == "denied" || d.microphoneStatus == "restricted") {
             lines.append("Microphone: enable in System Settings > Privacy & Security > Microphone.")
-        } else if d.microphoneStatus == "notDetermined" {
+        } else if !effective.microphoneGranted && d.microphoneStatus == "notDetermined" {
             lines.append("Microphone: notDetermined means macOS should still be able to show a prompt.")
         }
 
-        if !d.screenRecordingPreflightGranted {
+        if !effective.screenRecordingGranted {
             lines.append("Screen Recording: enable in Privacy & Security > Screen Recording, then fully quit and reopen MeetScribe.")
         }
 

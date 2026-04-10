@@ -310,8 +310,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             // After first run, avoid re-showing broad permission onboarding on every launch.
             // Only auto-present when there is still a promptable TCC state.
             let diagnostics = Permissions.diagnostics()
-            let hasPromptableState = diagnostics.calendarStatus == "notDetermined"
-                || diagnostics.microphoneStatus == "notDetermined"
+            let effective = Permissions.effectiveSnapshotForDiagnostics()
+            let hasPromptableState = (!effective.calendarGranted && diagnostics.calendarStatus == "notDetermined")
+                || (!effective.microphoneGranted && diagnostics.microphoneStatus == "notDetermined")
             if hasPromptableState {
                 await presentPermissionSetupBox(snapshot: snapshot)
             }
@@ -329,8 +330,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         let alert = NSAlert()
         alert.messageText = "MeetScribe needs permissions"
-        if liveSnapshot.screenRecordingOnlyBlocker {
-            alert.informativeText = "Calendar and Microphone are granted. Screen Recording is still not active for this running process. If it is enabled in System Settings, fully quit and reopen MeetScribe."
+        if liveSnapshot.screenRecordingRelaunchLikely {
+            alert.informativeText = "Calendar and Microphone are granted. Screen Recording is still not active for this running process. If MeetScribe is enabled in System Settings, fully quit and reopen."
             alert.addButton(withTitle: "Quit and Reopen")
             alert.addButton(withTitle: "Later")
         } else {
@@ -346,7 +347,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             return
         }
 
-        if liveSnapshot.screenRecordingOnlyBlocker {
+        if liveSnapshot.screenRecordingRelaunchLikely {
             NSApp.terminate(nil)
             return
         }
@@ -360,7 +361,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         if snapshot.allGranted {
             alert.messageText = "Permissions granted"
             alert.informativeText = "MeetScribe now has Calendar, Microphone, and Screen Recording access."
-        } else if snapshot.screenRecordingOnlyBlocker {
+        } else if snapshot.screenRecordingRelaunchLikely {
             alert.messageText = "Relaunch required for Screen Recording"
             alert.informativeText = "Calendar and Microphone are granted. Screen Recording appears enabled but is not active for this run. Fully quit and reopen MeetScribe."
         } else {
