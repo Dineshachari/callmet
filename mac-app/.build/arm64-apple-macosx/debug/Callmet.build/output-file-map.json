@@ -1,0 +1,26 @@
+{
+  "": {
+    "swift-dependencies": "/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug/Callmet.build/primary.swiftdeps"
+  },
+  "/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/Sources/AppViewModel.swift": {
+    "dependencies": "/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug/Callmet.build/AppViewModel.d",
+    "object": "/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug/Callmet.build/AppViewModel.swift.o",
+    "swiftmodule": "/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug/Callmet.build/AppViewModel~partial.swiftmodule",
+    "swift-dependencies": "/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug/Callmet.build/AppViewModel.swiftdeps",
+    "diagnostics": "/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug/Callmet.build/AppViewModel.dia"
+  },
+  "/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/Sources/ContentView.swift": {
+    "dependencies": "/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug/Callmet.build/ContentView.d",
+    "object": "/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug/Callmet.build/ContentView.swift.o",
+    "swiftmodule": "/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug/Callmet.build/ContentView~partial.swiftmodule",
+    "swift-dependencies": "/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug/Callmet.build/ContentView.swiftdeps",
+    "diagnostics": "/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug/Callmet.build/ContentView.dia"
+  },
+  "/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/Sources/MeetingBotMacApp.swift": {
+    "dependencies": "/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug/Callmet.build/MeetingBotMacApp.d",
+    "object": "/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug/Callmet.build/MeetingBotMacApp.swift.o",
+    "swiftmodule": "/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug/Callmet.build/MeetingBotMacApp~partial.swiftmodule",
+    "swift-dependencies": "/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug/Callmet.build/MeetingBotMacApp.swiftdeps",
+    "diagnostics": "/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug/Callmet.build/MeetingBotMacApp.dia"
+  }
+}

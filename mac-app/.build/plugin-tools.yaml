@@ -1,0 +1,81 @@
+client:
+  name: basic
+  file-system: device-agnostic
+tools: {}
+targets:
+  "Callmet-arm64-apple-macosx-debug.exe": ["<Callmet-arm64-apple-macosx-debug.exe>"]
+  "Callmet-arm64-apple-macosx-debug.module": ["<Callmet-arm64-apple-macosx-debug.module>"]
+  "PackageStructure": ["<PackageStructure>"]
+  "main": ["<Callmet-arm64-apple-macosx-debug.exe>","<Callmet-arm64-apple-macosx-debug.module>"]
+  "test": ["<Callmet-arm64-apple-macosx-debug.exe>","<Callmet-arm64-apple-macosx-debug.module>"]
+default: "main"
+nodes:
+  "/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/Sources/":
+    is-directory-structure: true
+    content-exclusion-patterns: [".git",".build"]
+  "/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug/Callmet":
+    is-mutated: true
+commands:
+  "/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug/Callmet-entitlement.plist":
+    tool: write-auxiliary-file
+    inputs: ["<entitlement-plist>","<com.apple.security.get-task-allow>"]
+    outputs: ["/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug/Callmet-entitlement.plist"]
+    description: "Write auxiliary file /Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug/Callmet-entitlement.plist"
+
+  "/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug/Callmet.build/sources":
+    tool: write-auxiliary-file
+    inputs: ["<sources-file-list>","/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/Sources/AppViewModel.swift","/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/Sources/ContentView.swift","/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/Sources/MeetingBotMacApp.swift"]
+    outputs: ["/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug/Callmet.build/sources"]
+    description: "Write auxiliary file /Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug/Callmet.build/sources"
+
+  "/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug/Callmet.product/Objects.LinkFileList":
+    tool: write-auxiliary-file
+    inputs: ["<link-file-list>","/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug/Callmet.build/AppViewModel.swift.o","/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug/Callmet.build/ContentView.swift.o","/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug/Callmet.build/MeetingBotMacApp.swift.o"]
+    outputs: ["/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug/Callmet.product/Objects.LinkFileList"]
+    description: "Write auxiliary file /Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug/Callmet.product/Objects.LinkFileList"
+
+  "/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt":
+    tool: write-auxiliary-file
+    inputs: ["<swift-get-version>","/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"]
+    outputs: ["/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"]
+    always-out-of-date: "true"
+    description: "Write auxiliary file /Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+
+  "<Callmet-arm64-apple-macosx-debug.exe>":
+    tool: phony
+    inputs: ["<Callmet-arm64-apple-macosx-debug.exe-CodeSigning>"]
+    outputs: ["<Callmet-arm64-apple-macosx-debug.exe>"]
+
+  "<Callmet-arm64-apple-macosx-debug.module>":
+    tool: phony
+    inputs: ["/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug/Callmet.build/AppViewModel.swift.o","/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug/Callmet.build/ContentView.swift.o","/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug/Callmet.build/MeetingBotMacApp.swift.o","/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug/Modules/Callmet.swiftmodule"]
+    outputs: ["<Callmet-arm64-apple-macosx-debug.module>"]
+
+  "C.Callmet-arm64-apple-macosx-debug.exe":
+    tool: shell
+    inputs: ["/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug/Callmet.build/AppViewModel.swift.o","/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug/Callmet.build/ContentView.swift.o","/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug/Callmet.build/MeetingBotMacApp.swift.o","/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug/Callmet.product/Objects.LinkFileList"]
+    outputs: ["/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug/Callmet"]
+    description: "Linking ./.build/arm64-apple-macosx/debug/Callmet"
+    args: ["/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc","-L","/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug","-o","/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug/Callmet","-module-name","Callmet","-Xlinker","-no_warn_duplicate_libraries","-emit-executable","-Xlinker","-alias","-Xlinker","_Callmet_main","-Xlinker","_main","-Xlinker","-rpath","-Xlinker","@loader_path","@/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug/Callmet.product/Objects.LinkFileList","-Xlinker","-rpath","-Xlinker","/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift-6.2/macosx","-target","arm64-apple-macosx13.0","-Xlinker","-add_ast_path","-Xlinker","/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug/Modules/Callmet.swiftmodule","-plugin-path","/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing","-sdk","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk","-F","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-I","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-L","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-g"]
+
+  "C.Callmet-arm64-apple-macosx-debug.exe-entitlements":
+    tool: shell
+    inputs: ["/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug/Callmet","/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug/Callmet-entitlement.plist"]
+    outputs: ["<Callmet-arm64-apple-macosx-debug.exe-CodeSigning>"]
+    description: "Applying debug entitlements to ./.build/arm64-apple-macosx/debug/Callmet"
+    args: ["codesign","--force","--sign","-","--entitlements","/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug/Callmet-entitlement.plist","/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug/Callmet"]
+
+  "C.Callmet-arm64-apple-macosx-debug.module":
+    tool: shell
+    inputs: ["/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/Sources/AppViewModel.swift","/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/Sources/ContentView.swift","/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/Sources/MeetingBotMacApp.swift","/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt","/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug/Callmet.build/sources"]
+    outputs: ["/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug/Callmet.build/AppViewModel.swift.o","/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug/Callmet.build/ContentView.swift.o","/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug/Callmet.build/MeetingBotMacApp.swift.o","/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug/Modules/Callmet.swiftmodule"]
+    description: "Compiling Swift Module 'Callmet' (3 sources)"
+    args: ["/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc","-module-name","Callmet","-emit-dependencies","-emit-module","-emit-module-path","/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug/Modules/Callmet.swiftmodule","-output-file-map","/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug/Callmet.build/output-file-map.json","-incremental","-c","@/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug/Callmet.build/sources","-I","/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug/Modules","-target","arm64-apple-macosx13.0","-incremental","-enable-batch-mode","-serialize-diagnostics","-index-store-path","/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug/index/store","-Onone","-enable-testing","-j8","-DSWIFT_PACKAGE","-DDEBUG","-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE","-module-cache-path","/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/.build/arm64-apple-macosx/debug/ModuleCache","-parseable-output","-Xfrontend","-entry-point-function-name","-Xfrontend","Callmet_main","-swift-version","5","-plugin-path","/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing","-sdk","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk","-F","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-I","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-L","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-g","-Xcc","-isysroot","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk","-Xcc","-F","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-Xcc","-fPIC","-Xcc","-g","-package-name","mac_app"]
+
+  "PackageStructure":
+    tool: package-structure-tool
+    inputs: ["/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/Sources/","/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/Package.swift","/Users/dinesh/Development/Ai/meeting-bot-local/mac-app/Package.resolved"]
+    outputs: ["<PackageStructure>"]
+    description: "Planning build"
+    allow-missing-inputs: true
+

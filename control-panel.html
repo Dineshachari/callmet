@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Meeting Bot Control Panel</title>
+    <style>
+      body { font-family: Arial, sans-serif; margin: 24px; max-width: 720px; }
+      h1 { margin-bottom: 8px; }
+      .card { border: 1px solid #ddd; border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+      label { display: block; margin-bottom: 8px; font-weight: 600; }
+      input, select, button { width: 100%; padding: 10px; margin-bottom: 12px; box-sizing: border-box; }
+      button { cursor: pointer; }
+      pre { white-space: pre-wrap; background: #f7f7f7; padding: 12px; border-radius: 6px; border: 1px solid #eee; }
+      .note { color: #555; font-size: 13px; }
+    </style>
+  </head>
+  <body>
+    <h1>Meeting Bot Control Panel</h1>
+    <p class="note">Configure local recording mode and join meetings directly.</p>
+
+    <div class="card">
+      <h3>Recording Config</h3>
+      <label for="quality">Quality</label>
+      <select id="quality">
+        <option value="720p">720p</option>
+        <option value="1080p">1080p</option>
+      </select>
+
+      <label for="hostDir">Recordings Host Directory</label>
+      <input id="hostDir" placeholder="./recordings" />
+
+      <label for="containerDir">Recordings Container Directory</label>
+      <input id="containerDir" placeholder="/recordings" />
+
+      <label for="token">Bot Bearer Token</label>
+      <input id="token" placeholder="local-dev-token" />
+
+      <button id="saveBtn">Save Config + Restart Bot</button>
+      <pre id="saveStatus"></pre>
+    </div>
+
+    <div class="card">
+      <h3>Join Meeting</h3>
+      <label for="meetingLink">Meeting Link</label>
+      <input id="meetingLink" placeholder="https://meet.google.com/xxx-xxxx-xxx" />
+      <button id="joinBtn">Join</button>
+      <pre id="joinStatus"></pre>
+    </div>
+
+    <div class="card">
+      <h3>Audio Track Note</h3>
+      <p class="note">
+        Separate participant audio tracks are only possible if the captured stream exposes multiple independent
+        audio tracks. Most Meet tab captures provide a mixed track. The bot currently records what the browser provides.
+      </p>
+    </div>
+
+    <script>
+      const qualityEl = document.getElementById('quality');
+      const hostDirEl = document.getElementById('hostDir');
+      const containerDirEl = document.getElementById('containerDir');
+      const tokenEl = document.getElementById('token');
+      const saveStatusEl = document.getElementById('saveStatus');
+      const linkEl = document.getElementById('meetingLink');
+      const joinStatusEl = document.getElementById('joinStatus');
+
+      async function loadConfig() {
+        const res = await fetch('/api/config');
+        const data = await res.json();
+        qualityEl.value = data.quality || '1080p';
+        hostDirEl.value = data.recordingsHostDir || './recordings';
+        containerDirEl.value = data.recordingsContainerDir || '/recordings';
+        tokenEl.value = data.botBearerToken || 'local-dev-token';
+      }
+
+      document.getElementById('saveBtn').onclick = async () => {
+        saveStatusEl.textContent = 'Applying...';
+        const payload = {
+          quality: qualityEl.value,
+          recordingsHostDir: hostDirEl.value,
+          recordingsContainerDir: containerDirEl.value,
+          botBearerToken: tokenEl.value,
+        };
+        const res = await fetch('/api/config', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        const data = await res.json();
+        saveStatusEl.textContent = data.ok ? 'Updated successfully.' : `Failed: ${data.error}`;
+      };
+
+      document.getElementById('joinBtn').onclick = async () => {
+        joinStatusEl.textContent = 'Submitting join request...';
+        const payload = { link: linkEl.value.trim() };
+        const res = await fetch('/api/join', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        const data = await res.json();
+        joinStatusEl.textContent = data.ok ? data.output : `Failed: ${data.error}`;
+      };
+
+      loadConfig().catch((err) => {
+        saveStatusEl.textContent = `Failed to load config: ${err.message || err}`;
+      });
+    </script>
+  </body>
+  </html>

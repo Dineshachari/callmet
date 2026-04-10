@@ -1,0 +1,21 @@
+services:
+  meeting-bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        LOCAL_RECORDING_QUALITY: ${LOCAL_RECORDING_QUALITY}
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      MAX_RECORDING_DURATION_MINUTES: ${MAX_RECORDING_DURATION_MINUTES}
+      REDIS_CONSUMER_ENABLED: ${REDIS_CONSUMER_ENABLED}
+      STORAGE_PROVIDER: local
+      UPLOADER_FILE_EXTENSION: ${UPLOADER_FILE_EXTENSION}
+      LOCAL_RECORDINGS_DIR: ${LOCAL_RECORDINGS_DIR}
+    volumes:
+      - ${LOCAL_RECORDINGS_HOST_DIR}:${LOCAL_RECORDINGS_DIR}
+    restart: unless-stopped
