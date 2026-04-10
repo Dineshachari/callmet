@@ -28,6 +28,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var botNameStatusItem: NSMenuItem?
     private var outputFolderItem: NSMenuItem?
     private var permissionsItem: NSMenuItem?
+    private var screenRecordingSettingsItem: NSMenuItem?
+    private var permissionDiagnosticsItem: NSMenuItem?
     private var observers: [NSObjectProtocol] = []
     private var isMonitoring = false
 
@@ -118,6 +120,20 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
+    @objc private func openScreenRecordingSystemSettings() {
+        Permissions.openScreenRecordingPrivacyPane()
+    }
+
+    @objc private func showPermissionDiagnostics() {
+        let lines = Permissions.diagnosticsLines()
+        let alert = NSAlert()
+        alert.messageText = "Permission Diagnostics"
+        alert.informativeText = lines.joined(separator: "\n")
+        alert.addButton(withTitle: "OK")
+        NSApp.activate(ignoringOtherApps: true)
+        alert.runModal()
+    }
+
     @objc private func quitApp() {
         NSApp.terminate(nil)
     }
@@ -198,6 +214,24 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         menu.addItem(permissions)
         permissionsItem = permissions
 
+        let screenRecSettings = NSMenuItem(
+            title: "Open Screen Recording Settings…",
+            action: #selector(openScreenRecordingSystemSettings),
+            keyEquivalent: ""
+        )
+        screenRecSettings.target = self
+        menu.addItem(screenRecSettings)
+        screenRecordingSettingsItem = screenRecSettings
+
+        let diagnostics = NSMenuItem(
+            title: "Permission Diagnostics…",
+            action: #selector(showPermissionDiagnostics),
+            keyEquivalent: ""
+        )
+        diagnostics.target = self
+        menu.addItem(diagnostics)
+        permissionDiagnosticsItem = diagnostics
+
         menu.addItem(.separator())
 
         let quit = NSMenuItem(title: "Quit MeetScribe", action: #selector(quitApp), keyEquivalent: "q")
@@ -216,6 +250,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         joinItem?.isEnabled = true
         botNameItem?.isEnabled = true
         permissionsItem?.isEnabled = true
+        screenRecordingSettingsItem?.isEnabled = true
+        permissionDiagnosticsItem?.isEnabled = true
         statusItem?.button?.title = isMonitoring ? "MeetScribe ●" : "MeetScribe ○"
         outputFolderItem?.title = "Output Folder: \(outputFolderStore.displayName())"
         botNameStatusItem?.title = "Bot Name: \(botSettings.displayName)"
@@ -266,7 +302,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             alert.informativeText = "MeetScribe now has Calendar, Microphone, and Screen Recording access."
         } else {
             alert.messageText = "Some permissions are still missing"
-            alert.informativeText = "Open System Settings > Privacy & Security if macOS did not show a prompt for one of these."
+            alert.informativeText = """
+            Open System Settings > Privacy & Security if macOS did not show a prompt.
+            Then use Permission Diagnostics in the menu to verify exact raw states.
+            """
         }
         alert.addButton(withTitle: "OK")
         alert.accessoryView = makePermissionAccessoryView(snapshot: snapshot)
