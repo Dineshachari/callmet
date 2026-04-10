@@ -1,7 +1,9 @@
 import Foundation
+import AppKit
 
 @MainActor
 final class AppViewModel: ObservableObject {
+    @Published var projectPath: String = ""
     @Published var quality: String = "1080p"
     @Published var hostDir: String = "./recordings"
     @Published var containerDir: String = "/recordings"
@@ -12,20 +14,18 @@ final class AppViewModel: ObservableObject {
     @Published var logs: String = ""
 
     private let envFile = ".env"
-    private var projectRoot: URL {
-        // Package runs from mac-app/, so parent is repo root.
-        URL(fileURLWithPath: FileManager.default.currentDirectoryPath).deletingLastPathComponent()
-    }
 
     init() {
         Task {
+            self.detectDefaultProjectPath()
             await loadEnv()
         }
     }
 
     func loadEnv() async {
         do {
-            let envURL = projectRoot.appendingPathComponent(envFile)
+            let root = try resolvedProjectRoot()
+            let envURL = root.appendingPathComponent(envFile)
             let text = try String(contentsOf: envURL, encoding: .utf8)
             let map = parseEnv(text)
             quality = (map["LOCAL_RECORDING_QUALITY"] == "720p") ? "720p" : "1080p"
@@ -38,9 +38,24 @@ final class AppViewModel: ObservableObject {
         }
     }
 
+    func pickProjectFolder() {
+        let panel = NSOpenPanel()
+        panel.canChooseDirectories = true
+        panel.canChooseFiles = false
+        panel.allowsMultipleSelection = false
+        panel.prompt = "Use Folder"
+        panel.message = "Select your meeting-bot project folder."
+        if panel.runModal() == .OK, let url = panel.url {
+            projectPath = url.path
+            UserDefaults.standard.set(url.path, forKey: "callmet.projectPath")
+            Task { await loadEnv() }
+        }
+    }
+
     func saveConfigAndRestart() async {
         await runBusy("Saving config and rebuilding bot...") { [self] in
-            let envURL = self.projectRoot.appendingPathComponent(self.envFile)
+            let root = try self.resolvedProjectRoot()
+            let envURL = root.appendingPathComponent(self.envFile)
             let current = (try? String(contentsOf: envURL, encoding: .utf8)) ?? ""
             let updated = self.upsertEnv(in: current, updates: [
                 "LOCAL_RECORDING_QUALITY": self.quality,
@@ -52,7 +67,7 @@ final class AppViewModel: ObservableObject {
 
             let output = try await self.runShell(
                 command: "docker compose up -d --build meeting-bot",
-                workingDirectory: self.projectRoot
+                workingDirectory: root
             )
             self.appendLogs(output)
             self.status = "Config saved and bot restarted."
@@ -68,7 +83,7 @@ final class AppViewModel: ObservableObject {
             let safeToken = self.shellEscape(self.bearerToken)
             let safeLink = self.shellEscape(trimmed)
             let cmd = "MEETING_BOT_BEARER_TOKEN=\(safeToken) ./join-meeting \(safeLink)"
-            let output = try await self.runShell(command: cmd, workingDirectory: self.projectRoot)
+            let output = try await self.runShell(command: cmd, workingDirectory: try self.resolvedProjectRoot())
             self.appendLogs(output)
             self.status = "Join request sent."
         }
@@ -78,7 +93,7 @@ final class AppViewModel: ObservableObject {
         await runBusy("Refreshing logs...") { [self] in
             let output = try await self.runShell(
                 command: "docker compose logs --no-color --tail=120 meeting-bot",
-                workingDirectory: self.projectRoot
+                workingDirectory: try self.resolvedProjectRoot()
             )
             self.logs = output
             self.status = "Logs refreshed."
@@ -176,6 +191,41 @@ final class AppViewModel: ObservableObject {
                 }
             }
         }
+    }
+
+    private func detectDefaultProjectPath() {
+        if let saved = UserDefaults.standard.string(forKey: "callmet.projectPath"), !saved.isEmpty {
+            projectPath = saved
+            return
+        }
+        // Try current directory first, then parent as a convenience for swift run from mac-app/.
+        let cwd = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
+        let candidates = [cwd, cwd.deletingLastPathComponent()]
+        for candidate in candidates {
+            if isValidProjectRoot(candidate) {
+                projectPath = candidate.path
+                UserDefaults.standard.set(projectPath, forKey: "callmet.projectPath")
+                return
+            }
+        }
+    }
+
+    private func resolvedProjectRoot() throws -> URL {
+        let path = projectPath.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !path.isEmpty else {
+            throw AppError("Project path is empty. Choose the project folder first.")
+        }
+        let url = URL(fileURLWithPath: path)
+        guard isValidProjectRoot(url) else {
+            throw AppError("Selected folder does not look like this project (missing .env / join-meeting / docker-compose.yml).")
+        }
+        return url
+    }
+
+    private func isValidProjectRoot(_ url: URL) -> Bool {
+        let fm = FileManager.default
+        let mustExist = [".env", "join-meeting", "docker-compose.yml"]
+        return mustExist.allSatisfy { fm.fileExists(atPath: url.appendingPathComponent($0).path) }
     }
 }
 

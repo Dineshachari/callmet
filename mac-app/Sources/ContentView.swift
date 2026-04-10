@@ -9,6 +9,23 @@ struct ContentView: View {
                 .font(.title2)
                 .bold()
 
+            GroupBox("Project") {
+                VStack(alignment: .leading, spacing: 10) {
+                    TextField("/absolute/path/to/meeting-bot-local", text: $vm.projectPath)
+                    HStack {
+                        Button("Choose Folder") {
+                            vm.pickProjectFolder()
+                        }
+                        .disabled(vm.busy)
+                        Button("Reload .env") {
+                            Task { await vm.loadEnv() }
+                        }
+                        .disabled(vm.busy)
+                    }
+                }
+                .padding(.top, 4)
+            }
+
             GroupBox("Recording Configuration") {
                 VStack(alignment: .leading, spacing: 10) {
                     Picker("Quality", selection: $vm.quality) {
