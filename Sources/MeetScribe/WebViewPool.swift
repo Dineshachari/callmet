@@ -28,7 +28,7 @@ final class WebViewPool {
         createdWebView.navigationDelegate = createdWebView.coordinator
 
         let createdWindow = NSWindow(
-            contentRect: NSRect(x: -5000, y: -5000, width: 1280, height: 720),
+            contentRect: NSRect(x: 0, y: 0, width: 1280, height: 720),
             styleMask: [.borderless],
             backing: .buffered,
             defer: false
@@ -59,7 +59,17 @@ final class WebViewPool {
             _ = makeBotWindow()
         }
         guard let webView else { return }
-        try await webView.loadAsync(URLRequest(url: url))
+        try await withThrowingTaskGroup(of: Void.self) { group in
+            group.addTask {
+                try await webView.loadAsync(URLRequest(url: url))
+            }
+            group.addTask {
+                try await Task.sleep(nanoseconds: 30_000_000_000)
+                throw NSError(domain: "MeetScribe", code: 6, userInfo: [NSLocalizedDescriptionKey: "Page load timed out after 30 seconds"])
+            }
+            try await group.next()
+            group.cancelAll()
+        }
     }
 
     func run(script: String) async throws -> Any? {

@@ -42,13 +42,7 @@ final class KeepAwake {
         let hasExternalDisplay = NSScreen.screens.count > 1
         guard !hasExternalDisplay else { return }
 
-        DispatchQueue.main.async {
-            let alert = NSAlert()
-            alert.messageText = "Keep lid open"
-            alert.informativeText = "On MacBook Air, closing the lid can stop recording even with KeepAwake. Use an external display if you want to run with the lid closed."
-            alert.alertStyle = .warning
-            alert.runModal()
-        }
+        AppTrace.log("keepAwake.lidWarning singleDisplay – closing the lid may stop recording")
     }
 
     deinit {

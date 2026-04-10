@@ -7,10 +7,14 @@ final class ScreenCaptureSession: NSObject, SCStreamOutput, SCStreamDelegate {
     var onAudio: ((CMSampleBuffer) -> Void)?
 
     func start(windowID: CGWindowID) async throws {
-        let content = try await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: true)
+        let content = try await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: false)
+        AppTrace.log("capture.windowSearch targetID=\(windowID) totalWindows=\(content.windows.count)")
         guard let window = content.windows.first(where: { $0.windowID == windowID }) else {
+            let ids = content.windows.prefix(20).map { "\($0.windowID)" }.joined(separator: ",")
+            AppTrace.log("capture.windowNotFound targetID=\(windowID) sampleIDs=[\(ids)]")
             throw NSError(domain: "MeetScribe", code: 3, userInfo: [NSLocalizedDescriptionKey: "Unable to locate target window"])
         }
+        AppTrace.log("capture.windowFound id=\(windowID) title=\(window.title ?? "nil")")
 
         let filter = SCContentFilter(desktopIndependentWindow: window)
         let config = SCStreamConfiguration()
@@ -45,6 +49,7 @@ final class ScreenCaptureSession: NSObject, SCStreamOutput, SCStreamDelegate {
     }
 
     func stream(_ stream: SCStream, didStopWithError error: Error) {
+        AppTrace.log("capture.streamError error=\(error.localizedDescription)")
         NotificationCenter.default.post(name: .captureStopped, object: error)
     }
 }

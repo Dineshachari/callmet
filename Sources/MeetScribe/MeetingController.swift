@@ -54,12 +54,17 @@ final class MeetingController {
         AppTrace.log("meeting.startRecording begin url=\(request.meetingURL.absoluteString) name=\(request.meetingName)")
         let snapshot = await Permissions.currentSnapshot()
         AppTrace.log("meeting.startRecording snapshot calendar=\(snapshot.calendarGranted) mic=\(snapshot.microphoneGranted) screen=\(snapshot.screenRecordingGranted)")
-        if !snapshot.allGranted {
+
+        if !snapshot.calendarGranted || !snapshot.microphoneGranted {
             let updatedSnapshot = await Permissions.requestMissingPermissions()
-            guard updatedSnapshot.allGranted else {
+            if !updatedSnapshot.calendarGranted || !updatedSnapshot.microphoneGranted {
                 AppTrace.log("meeting.permissionsMissing calendar=\(updatedSnapshot.calendarGranted) mic=\(updatedSnapshot.microphoneGranted) screen=\(updatedSnapshot.screenRecordingGranted)")
-                throw NSError(domain: "MeetScribe", code: 5, userInfo: [NSLocalizedDescriptionKey: "Permissions are required"])
+                throw NSError(domain: "MeetScribe", code: 5, userInfo: [NSLocalizedDescriptionKey: "Calendar and Microphone permissions are required"])
             }
+        }
+
+        if !snapshot.screenRecordingGranted {
+            AppTrace.log("meeting.screenRecording preflightFalse – will attempt capture anyway (ad-hoc signing can cause stale reads)")
         }
 
         let joinedAt = Date()
@@ -77,6 +82,19 @@ final class MeetingController {
 
             let outputURL = outputDirectory
                 .appendingPathComponent("meetscribe-\(UUID().uuidString).mov")
+
+            AppTrace.log("meeting.writer.start output=\(outputURL.path)")
+            try writer.start(url: outputURL)
+            AppTrace.log("meeting.writer.started")
+
+            AppTrace.log("meeting.mixer.start")
+            try mixer.start()
+            AppTrace.log("meeting.mixer.started")
+
+            AppTrace.log("meeting.captureSession.start windowID=\(windowID)")
+            try await captureSession.start(windowID: windowID)
+            AppTrace.log("meeting.captureSession.started")
+
             currentSession = MeetingSession(
                 request: request,
                 recordingURL: outputURL,
@@ -85,10 +103,6 @@ final class MeetingController {
             )
             NotificationCenter.default.post(name: Notification.Name("captureStarted"), object: nil)
             AppTrace.log("meeting.captureStarted output=\(outputURL.path)")
-            try writer.start(url: outputURL)
-
-            try mixer.start()
-            try await captureSession.start(windowID: windowID)
         } catch {
             currentSession = nil
             keepAwake.stop()

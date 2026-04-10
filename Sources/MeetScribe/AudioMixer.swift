@@ -1,5 +1,6 @@
 import AVFoundation
 import CoreMedia
+import Darwin.Mach
 
 final class AudioMixer {
     private let engine = AVAudioEngine()
@@ -13,35 +14,47 @@ final class AudioMixer {
         try inputNode.setVoiceProcessingEnabled(true)
 
         let inputFormat = inputNode.outputFormat(forBus: 0)
-        guard let outputFormat = AVAudioFormat(
+        guard inputFormat.channelCount > 0 else {
+            throw NSError(domain: "MeetScribe", code: 2, userInfo: [NSLocalizedDescriptionKey: "No microphone input channels available"])
+        }
+        AppTrace.log("mixer.inputFormat rate=\(inputFormat.sampleRate) ch=\(inputFormat.channelCount)")
+
+        let monoOutput = AVAudioFormat(
             commonFormat: .pcmFormatInt16,
             sampleRate: inputFormat.sampleRate,
-            channels: inputFormat.channelCount,
+            channels: 1,
             interleaved: true
-        ) else {
-            throw NSError(domain: "MeetScribe", code: 2, userInfo: [NSLocalizedDescriptionKey: "Unable to create output audio format"])
-        }
+        )
+        let outputFormat = monoOutput ?? inputFormat
+        AppTrace.log("mixer.outputFormat rate=\(outputFormat.sampleRate) ch=\(outputFormat.channelCount)")
 
         self.outputFormat = outputFormat
-        self.converter = AVAudioConverter(from: inputFormat, to: outputFormat)
+        self.converter = inputFormat == outputFormat ? nil : AVAudioConverter(from: inputFormat, to: outputFormat)
 
         inputNode.installTap(onBus: 0, bufferSize: 1024, format: inputFormat) { [weak self] buffer, time in
-            guard let self, let converter else { return }
+            guard let self else { return }
             let outputFormat = self.outputFormat ?? inputFormat
 
-            let ratio = outputFormat.sampleRate / buffer.format.sampleRate
-            let capacity = AVAudioFrameCount(Double(buffer.frameLength) * ratio) + 1
-            guard let converted = AVAudioPCMBuffer(pcmFormat: outputFormat, frameCapacity: capacity) else { return }
+            let sourceBuffer: AVAudioPCMBuffer
+            if let converter = self.converter {
+                let ratio = outputFormat.sampleRate / buffer.format.sampleRate
+                let capacity = AVAudioFrameCount(Double(buffer.frameLength) * ratio) + 1
+                guard let converted = AVAudioPCMBuffer(pcmFormat: outputFormat, frameCapacity: capacity) else { return }
 
-            var error: NSError?
-            let status = converter.convert(to: converted, error: &error) { _, outStatus in
-                outStatus.pointee = .haveData
-                return buffer
+                var error: NSError?
+                let status = converter.convert(to: converted, error: &error) { _, outStatus in
+                    outStatus.pointee = .haveData
+                    return buffer
+                }
+
+                guard status != .error, error == nil else { return }
+                guard converted.frameLength > 0 else { return }
+                sourceBuffer = converted
+            } else {
+                sourceBuffer = buffer
             }
 
-            guard status != .error, error == nil else { return }
-            guard converted.frameLength > 0 else { return }
-            guard let sampleBuffer = self.makeSampleBuffer(from: converted, at: time) else { return }
+            guard let sampleBuffer = self.makeSampleBuffer(from: sourceBuffer, at: time) else { return }
             self.onBuffer?(sampleBuffer)
         }
 
@@ -98,8 +111,13 @@ final class AudioMixer {
         )
         guard copyStatus == kCMBlockBufferNoErr else { return nil }
 
-        let presentation = CMTime(value: time.sampleTime, timescale: CMTimeScale(outputFormat.sampleRate))
-        let duration = CMTime(value: 1, timescale: CMTimeScale(outputFormat.sampleRate))
+        let presentation: CMTime
+        if time.isHostTimeValid {
+            presentation = CMClockMakeHostTimeFromSystemUnits(time.hostTime)
+        } else {
+            presentation = CMTime(value: time.sampleTime, timescale: CMTimeScale(outputFormat.sampleRate))
+        }
+        let duration = CMTime(value: Int64(pcmBuffer.frameLength), timescale: CMTimeScale(outputFormat.sampleRate))
         var timing = CMSampleTimingInfo(duration: duration, presentationTimeStamp: presentation, decodeTimeStamp: .invalid)
         var sampleBuffer: CMSampleBuffer?
         let sampleStatus = CMSampleBufferCreateReady(
