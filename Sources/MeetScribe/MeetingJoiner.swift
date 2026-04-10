@@ -23,6 +23,9 @@ final class MeetingJoiner {
             AppTrace.log("joiner.injectScript resource=\(resourceName).js")
             _ = try await pool.run(script: injected)
             AppTrace.log("joiner.scriptInjected")
+            if resourceName == "join_meet" {
+                try await waitForMeetJoinState()
+            }
         } else {
             AppTrace.log("joiner.noScript resource=\(resourceName).js not found in bundle")
         }
@@ -33,6 +36,94 @@ final class MeetingJoiner {
         }
         AppTrace.log("joiner.windowID=\(id)")
         return id
+    }
+
+    private func waitForMeetJoinState() async throws {
+        let stateScript = "(function(){return window.__MEETSCRIBE_GET_MEET_STATE ? window.__MEETSCRIBE_GET_MEET_STATE() : null;})()"
+        var didRevealSignInWindow = false
+        for attempt in 1...35 {
+            let raw = try await pool.run(script: stateScript)
+            let state = Self.meetStateDictionary(from: raw)
+            let status = (state?["status"] as? String) ?? "unknown"
+            let joined = (state?["joined"] as? Bool) ?? false
+            let denied = (state?["denied"] as? Bool) ?? false
+            let elapsed = (state?["elapsedMs"] as? Double) ?? 0
+            let hint = (state?["hint"] as? String) ?? ""
+            let lastAction = (state?["lastAction"] as? String) ?? ""
+            let title = (state?["title"] as? String) ?? ""
+            let url = (state?["url"] as? String) ?? ""
+            let bodyProbe = (state?["bodyProbe"] as? String) ?? ""
+
+            if attempt == 1 || attempt % 5 == 0 || joined || denied {
+                AppTrace.log("joiner.meetState status=\(status) hint=\(hint) lastAction=\(lastAction) title=\(title) url=\(url) bodyProbe=\(bodyProbe) joined=\(joined) denied=\(denied) elapsedMs=\(Int(elapsed))")
+            }
+
+            if joined {
+                return
+            }
+            if denied {
+                pool.revealForManualSignIn()
+                throw NSError(
+                    domain: "MeetScribe",
+                    code: 8,
+                    userInfo: [NSLocalizedDescriptionKey: "Google Meet denied join access for this link"]
+                )
+            }
+            if status == "auth-required" {
+                if !didRevealSignInWindow {
+                    didRevealSignInWindow = true
+                    AppTrace.log("joiner.meetState auth-required; revealing bot window for manual sign-in")
+                    pool.revealForManualSignIn()
+                }
+                try await Task.sleep(nanoseconds: 1_000_000_000)
+                continue
+            }
+            if status == "browser-gate" {
+                throw NSError(
+                    domain: "MeetScribe",
+                    code: 12,
+                    userInfo: [NSLocalizedDescriptionKey: "Google Meet reported a browser compatibility gate"]
+                )
+            }
+            if status == "invalid-link" {
+                throw NSError(
+                    domain: "MeetScribe",
+                    code: 13,
+                    userInfo: [NSLocalizedDescriptionKey: "Google Meet link appears invalid or unavailable"]
+                )
+            }
+            if status == "timeout" || status == "timeout-waiting" {
+                throw NSError(
+                    domain: "MeetScribe",
+                    code: 9,
+                    userInfo: [NSLocalizedDescriptionKey: "Google Meet join timed out. Host approval may be required."]
+                )
+            }
+
+            try await Task.sleep(nanoseconds: 1_000_000_000)
+        }
+
+        throw NSError(
+            domain: "MeetScribe",
+            code: 10,
+            userInfo: [NSLocalizedDescriptionKey: "Unable to confirm Google Meet join state within timeout"]
+        )
+    }
+
+    private static func meetStateDictionary(from value: Any?) -> [String: Any]? {
+        if let dict = value as? [String: Any] {
+            return dict
+        }
+        if let nsDict = value as? NSDictionary {
+            var output: [String: Any] = [:]
+            for (key, val) in nsDict {
+                if let keyString = key as? String {
+                    output[keyString] = val
+                }
+            }
+            return output
+        }
+        return nil
     }
 
     var windowID: CGWindowID? {

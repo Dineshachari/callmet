@@ -79,6 +79,15 @@ final class WebViewPool {
         return try await webView.evaluateJavaScriptAsync(script)
     }
 
+    func revealForManualSignIn() {
+        guard let window else { return }
+        window.level = .normal
+        window.alphaValue = 1.0
+        window.setFrame(NSRect(x: 120, y: 120, width: 1280, height: 720), display: true)
+        window.orderFrontRegardless()
+        NSApp.activate(ignoringOtherApps: true)
+    }
+
     private func injectMediaMock() {
         guard let webView else { return }
         let script = """

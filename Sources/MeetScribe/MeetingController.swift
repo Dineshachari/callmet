@@ -15,6 +15,7 @@ final class MeetingController {
     private let sessionLogger = MeetingSessionLogger()
 
     private var currentSession: MeetingSession?
+    private var isStartingRecording = false
     var isRecording: Bool { currentSession != nil }
 
     init() {
@@ -30,8 +31,14 @@ final class MeetingController {
     }
 
     func handle(meetingRequest: MeetingRequest) {
+        if isStartingRecording || currentSession != nil {
+            AppTrace.log("meeting.handle ignored reason=busy source=\(meetingRequest.source == .scheduled ? "scheduled" : "manual") name=\(meetingRequest.meetingName)")
+            return
+        }
+        isStartingRecording = true
         AppTrace.log("meeting.handle source=\(meetingRequest.source == .scheduled ? "scheduled" : "manual") name=\(meetingRequest.meetingName)")
         Task {
+            defer { isStartingRecording = false }
             do {
                 try await startRecording(for: meetingRequest)
             } catch {
