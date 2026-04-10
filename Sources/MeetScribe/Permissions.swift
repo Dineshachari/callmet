@@ -60,13 +60,17 @@ struct PermissionDiagnostics {
 }
 
 enum Permissions {
+    private static var calendarGrantedOverride = false
+
     static func currentSnapshot() async -> PermissionSnapshot {
         let snapshot = PermissionSnapshot(
             calendarGranted: isCalendarGranted(),
             microphoneGranted: isMicrophoneGranted(),
             screenRecordingGranted: isScreenRecordingGranted()
         )
-        AppTrace.log("permissions.snapshot calendar=\(snapshot.calendarGranted) mic=\(snapshot.microphoneGranted) screen=\(snapshot.screenRecordingGranted)")
+        AppTrace.log(
+            "permissions.snapshot calendar=\(snapshot.calendarGranted) calendarStatus=\(calendarAuthorizationStatusDescription()) mic=\(snapshot.microphoneGranted) micStatus=\(microphoneAuthorizationStatusDescription()) screen=\(snapshot.screenRecordingGranted)"
+        )
         return snapshot
     }
 
@@ -125,6 +129,10 @@ enum Permissions {
     }
 
     static func isCalendarGranted() -> Bool {
+        if calendarGrantedOverride {
+            return true
+        }
+
         if #available(macOS 14.0, *) {
             let status = EKEventStore.authorizationStatus(for: .event)
             switch status {
@@ -181,7 +189,8 @@ enum Permissions {
                 let granted = try await store.requestFullAccessToEvents()
                 let status = calendarAuthorizationStatusDescription()
                 AppTrace.log("permissions.calendar requestFullAccess result=\(granted) status=\(status)")
-                // TCC can lag; trust the post-request status if it already flipped.
+                // TCC status can lag briefly; trust successful callback for this launch.
+                if granted { calendarGrantedOverride = true }
                 return granted || isCalendarGranted()
             } catch {
                 AppTrace.log("permissions.calendar requestFullAccess error=\(error.localizedDescription)")
@@ -192,6 +201,7 @@ enum Permissions {
         return await withCheckedContinuation { continuation in
             store.requestAccess(to: .event) { granted, _ in
                 AppTrace.log("permissions.calendar requestAccess result=\(granted) status=\(calendarAuthorizationStatusDescription())")
+                if granted { calendarGrantedOverride = true }
                 continuation.resume(returning: granted)
             }
         }
@@ -210,6 +220,10 @@ enum Permissions {
             // Avoid stale reads right after TCC/UI transitions.
             try? await Task.sleep(nanoseconds: 1_000_000_000)
             snapshot = await currentSnapshot()
+            if !snapshot.screenRecordingGranted {
+                try? await Task.sleep(nanoseconds: 1_000_000_000)
+                snapshot = await currentSnapshot()
+            }
         }
         return snapshot
     }

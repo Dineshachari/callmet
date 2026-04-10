@@ -42,6 +42,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         startMonitoring()
         wireNotifications()
+        wireLifecycleNotifications()
         registerLoginItemIfPossible()
         presentPermissionSetupIfNeeded()
     }
@@ -164,6 +165,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         observers.append(captureObserver)
     }
 
+    private func wireLifecycleNotifications() {
+        let activeObserver = NotificationCenter.default.addObserver(
+            forName: NSApplication.didBecomeActiveNotification,
+            object: nil,
+            queue: .main
+        ) { _ in
+            Task { @MainActor in
+                _ = await Permissions.currentSnapshot()
+                try? await Task.sleep(nanoseconds: 900_000_000)
+                _ = await Permissions.currentSnapshot()
+            }
+        }
+        observers.append(activeObserver)
+    }
+
     private func makeMenu() -> NSMenu {
         let menu = NSMenu()
 
@@ -264,11 +280,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func presentPermissionSetupIfNeeded() {
         Task { @MainActor in
-            let snapshot = await Permissions.currentSnapshot()
+            var snapshot = await Permissions.currentSnapshot()
             guard !snapshot.allGranted else {
                 return
             }
             try? await Task.sleep(nanoseconds: 750_000_000)
+            snapshot = await Permissions.currentSnapshot()
             await presentPermissionSetupBox(snapshot: snapshot)
         }
     }
